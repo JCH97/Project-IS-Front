@@ -36,7 +36,7 @@
               <router-link to="/">Home</router-link>
             </li>
             <li>
-              <a href="shop.html">Shop</a>
+              <router-link to="/shop">Shop</router-link>
             </li>
             <div v-if="this.user.log">
               <li>
