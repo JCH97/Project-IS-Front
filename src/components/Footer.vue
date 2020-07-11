@@ -44,11 +44,11 @@
                   </button>
                   <div class="collapse navbar-collapse" id="footerNavContent">
                     <ul class="navbar-nav ml-auto">
-                      <li class="nav-item active">
-                        <a class="nav-link" href="index.html">Home</a>
+                      <li class="nav-item">
+                        <router-link class="nav-link" to="/">Home</router-link>
                       </li>
                       <li class="nav-item">
-                        <a class="nav-link" href="shop.html">Tienda</a>
+                        <router-link class="nav-link" to="/shop">Shop</router-link>
                       </li>
                     </ul>
                   </div>
