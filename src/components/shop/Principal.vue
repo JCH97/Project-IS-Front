@@ -26,7 +26,7 @@
           <div class="catagories-menu">
             <ol>
               <li
-                v-for="item in modelsOfBrand"
+                v-for="item in Object.keys(modelsOfBrand)"
                 :key="item"
                 :id="`m${item}`"
                 @click="changeClassInModelList(item)"
@@ -45,7 +45,7 @@
               <div class="product-topbar d-xl-flex align-items-end justify-content-between">
                 <!-- Total Products -->
                 <div class="total-products">
-                  <p>Showing 1-8 0f 25 {{ this.selectedBrandModel.brand }} / {{ this.selectedBrandModel.model }}</p>
+                  <p>Showing {{ this.perPage * (this.page - 1) + 1 }} - {{ this.page * this.perPage }} 0f {{ this.numberOfPages }} {{ this.selectedBrandModel.brand }} / {{ this.selectedBrandModel.model }}</p>
                 </div>
               </div>
             </div>
@@ -102,17 +102,15 @@
               <!-- Pagination -->
               <nav aria-label="navigation">
                 <ul class="pagination justify-content-end mt-50">
-                  <li class="page-item">
-                    <a class="page-link" href="#">01.</a>
-                  </li>
-                  <li class="page-item">
-                    <a class="page-link" href="#">02.</a>
-                  </li>
-                  <li class="page-item">
-                    <a class="page-link" href="#">03.</a>
-                  </li>
-                  <li class="page-item">
-                    <a class="page-link" href="#">04.</a>
+                  <li
+                    class="page-item"
+                    v-for="(item) in numberOfPages"
+                    :key="item"
+                    :id="`n${item}`"
+                    @click="changeNumberPage(item)"
+                    :class="{'active': (item === 1)}"
+                  >
+                    <a class="page-link">{{ item }}.</a>
                   </li>
                 </ul>
               </nav>
@@ -134,15 +132,15 @@ export default {
   data() {
     return {
       brands: [],
-      modelsOfBrand: [],
+      modelsOfBrand: {}, //{ model1: id, model2: id, ...} vienen todos los modelos de brandSelected con el id correspondiente
       selectedBrandModel: {
         brand: "",
-        model: "",
-        id: ""
+        model: ""
       },
       parts: [], //esta es la ventana de piezas del carro y modelo seleccionados
       page: 1,
-      perPage: 6
+      perPage: 6,
+      numberOfPages: 0
     };
   },
   created() {
@@ -179,9 +177,6 @@ export default {
       document.querySelector(`#m${model}`).classList.add("active");
       this.selectedBrandModel.model = model;
 
-      //get id
-      this.getIdOfSelectedBrandModel();
-
       //get products to paginate
       this.getNewPageToProduct();
     },
@@ -190,25 +185,33 @@ export default {
         .get(`/api/car/getModels/${brand}`)
         .then(data => (this.modelsOfBrand = data.data));
     },
-    getIdOfSelectedBrandModel() {
-      this.axios
-        .get(
-          `/api/car/getCar/${this.selectedBrandModel.brand}@${this.selectedBrandModel.model}`
-        )
-        .then(data => {
-          this.selectedBrandModel.id = data.data;
-        });
-    },
     getNewPageToProduct() {
       const data = {
-        id: this.selectedBrandModel.id,
+        id: this.modelsOfBrand[this.selectedBrandModel.model],
         perPage: this.perPage,
         page: this.page
       };
 
       this.axios.post("/api/part/perPage", data).then(data => {
-        this.parts = data.data;
+        this.parts = data.data.parts;
+        this.numberOfPages = Math.ceil(
+          parseFloat(data.data.count) / parseFloat(this.perPage)
+        );
       });
+    },
+    changeNumberPage(newNumber) {
+      this.page = newNumber;
+      this.getNewPageToProduct();
+
+      let list = document.querySelectorAll("li.page-item");
+      console.log(list);
+      for (let i = 0; i < list.length; i++)
+        if (list[i].classList.contains("active")) {
+          list[i].classList.remove("active");
+          break;
+        }
+
+      document.querySelector(`#n${newNumber}`).classList.add("active");
     }
   }
 };
