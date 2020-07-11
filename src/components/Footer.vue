@@ -8,9 +8,9 @@
             <div class="single_widget_area">
               <!-- Logo -->
               <div class="footer-logo mr-50">
-                <a href="index.html">
+                <router-link to="/">
                   <img src="img/core-img/logo.png" width="150px" height="150px" alt />
-                </a>
+                </router-link>
               </div>
               <!-- Copywrite Text -->
               <p class="copywrite">
