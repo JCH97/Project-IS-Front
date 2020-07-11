@@ -1,79 +1,7 @@
 <template>
   <div>
     <div class="main-content-wrapper d-flex clearfix">
-      <!-- Mobile Nav (max width 767px)-->
-      <div class="mobile-nav">
-        <!-- Navbar Brand -->
-        <div class="amado-navbar-brand">
-          <router-link to="/">
-            <img src="img/core-img/logo.png" alt="Logo" />
-          </router-link>
-        </div>
-        <!-- Navbar Toggler -->
-        <div class="amado-navbar-toggler" @click="changeClass()">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-      </div>
-
-      <!-- Header Area Start -->
-      <header id="header" class="header-area clearfix">
-        <!-- Close Icon -->
-        <div class="nav-close" @click="changeClass()">
-          <i class="fa fa-close" aria-hidden="true"></i>
-        </div>
-        <!-- Logo -->
-        <div class="logo">
-          <a href="index.html">
-            <img src="img/core-img/logo.png" alt />
-          </a>
-        </div>
-        <!-- Amado Nav -->
-        <nav class="amado-nav">
-          <ul>
-            <li class="active">
-              <router-link to="/">Home</router-link>
-            </li>
-            <li>
-              <router-link to="/shop">Shop</router-link>
-            </li>
-            <div v-if="this.user.log">
-              <li>
-                <a href="product-details.html">Product</a>
-              </li>
-              <li>
-                <a href="cart.html">Cart</a>
-              </li>
-              <li>
-                <a href="checkout.html">Checkout</a>
-              </li>
-            </div>
-          </ul>
-        </nav>
-        <!-- Button Group -->
-        <div class="amado-btn-group mt-30 mb-100">
-          <a href="#" class="btn amado-btn mb-15">%Discount%</a>
-          <a href="#" class="btn amado-btn active">New this week</a>
-        </div>
-        <!-- Social Button -->
-        <div class="social-info d-flex justify-content-between">
-          <a href="#">
-            <i class="fa fa-pinterest" aria-hidden="true"></i>
-          </a>
-          <a href="#">
-            <i class="fa fa-instagram" aria-hidden="true"></i>
-          </a>
-          <a href="#">
-            <i class="fa fa-facebook" aria-hidden="true"></i>
-          </a>
-          <a href="#">
-            <i class="fa fa-twitter" aria-hidden="true"></i>
-          </a>
-        </div>
-      </header>
-      <!-- Header Area End -->
-
+      <Menu />
       <!-- Product Catagories Area Start -->
       <div class="products-catagories-area clearfix">
         <div class="amado-pro-catagory clearfix">
@@ -127,10 +55,12 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
-
+import Menu from "@/components/Menu.vue";
 export default {
   name: "Principal",
+  components: {
+    Menu
+  },
   data() {
     return {
       top: []
@@ -138,17 +68,6 @@ export default {
   },
   mounted() {
     this.axios.get("/api/part/top/9").then(data => (this.top = data.data));
-  },
-  methods: {
-    changeClass() {
-      let d = document.querySelector("header");
-
-      if (d.classList.contains("bp-xs-on")) d.classList.remove("bp-xs-on");
-      else d.classList.add("bp-xs-on");
-    }
-  },
-  computed: {
-    ...mapState(["user"])
   }
 };
 </script>
