@@ -37,7 +37,7 @@
           <li id="li-shop" @click="changeClassMenu('li-shop')">
             <router-link to="/shop">Shop</router-link>
           </li>
-          <div v-if="this.user.log">
+          <div v-if="user.log">
             <li id="li-product" @click="changeClassMenu('li-product')">
               <a href="product-details.html">Product</a>
             </li>
@@ -48,6 +48,12 @@
               <a href="checkout.html">Checkout</a>
             </li>
           </div>
+          <li v-if="!user.log">
+            <router-link to="/authenticate">Login</router-link>
+          </li>
+          <li v-else>
+            <p>Bienvenido, {{ this.user.log.userName }}</p>
+          </li>
         </ul>
       </nav>
       <!-- Button Group -->

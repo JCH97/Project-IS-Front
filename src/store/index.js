@@ -9,15 +9,19 @@ export default new Vuex.Store({
     user: {
       log: undefined,
       cart: []
-    }
+    },
+    tokens: undefined
   },
   mutations: {
     setProduct(state, prod) {
       state.products = prod;
     },
     setUser(state, user) {
-      state.user.log = user.log;
-      state.user.cart = user.cart || [];
+      state.user.log = user;
+      state.user.cart = [];
+    },
+    setTokens(state, tokens) {
+      state.tokens = tokens;
     }
   },
   actions: {
@@ -27,6 +31,10 @@ export default new Vuex.Store({
     },
     setUser: function ({ commit }, user) {
       commit('setUser', user)
+    },
+    setTokens: function ({ commit, dispatch }, tokens) {
+      commit('setTokens', tokens);
+      dispatch('setUser', tokens.toWork)
     }
   },
   modules: {}

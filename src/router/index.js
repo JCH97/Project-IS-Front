@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 
 import Home from "../views/Home.vue";
 import Shop from "../views/Shop.vue"
+import Login from "../views/Login.vue";
 
 Vue.use(VueRouter);
 
@@ -16,6 +17,11 @@ const routes = [
     path: "/shop",
     name: "Shop",
     component: Shop
+  },
+  {
+    path: "/authenticate",
+    name: "Login",
+    component: Login
   }
 ];
 
