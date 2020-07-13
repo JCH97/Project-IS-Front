@@ -8,7 +8,7 @@ export default new Vuex.Store({
     products: [],
     user: {
       log: undefined,
-      cart: []
+      cart: [] // [{ product1, quantity1 }, { prodcut2, quantity2 }, ... ]
     },
     tokens: undefined
   },
@@ -22,6 +22,9 @@ export default new Vuex.Store({
     },
     setTokens(state, tokens) {
       state.tokens = tokens;
+    },
+    addToCart(state, data) {
+      state.user.cart.push(data);
     }
   },
   actions: {
@@ -35,6 +38,9 @@ export default new Vuex.Store({
     setTokens: function ({ commit, dispatch }, tokens) {
       commit('setTokens', tokens);
       dispatch('setUser', tokens.toWork)
+    },
+    addToCart: function ({ commit }, data) { //data = { product, quantity }
+      commit('addToCart', data);
     }
   },
   modules: {}

@@ -4,6 +4,7 @@ import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Shop from "../views/Shop.vue"
 import Login from "../views/Login.vue";
+import ProductDetail from "../views/ProductDetail.vue";
 
 Vue.use(VueRouter);
 
@@ -22,6 +23,12 @@ const routes = [
     path: "/authenticate",
     name: "Login",
     component: Login
+  },
+  {
+    path: "/productDetail/:obj",
+    name: "ProdcutDetail",
+    component: ProductDetail,
+    props: true
   }
 ];
 

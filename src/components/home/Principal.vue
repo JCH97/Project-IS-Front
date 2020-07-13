@@ -13,7 +13,7 @@
           <div class="w3-row">
             <div class="w3-row-padding w3-padding" v-for="(item) in top" :key="item._id">
               <div class="w3-col m4 single-products-catagory clearfix w3-animate-left">
-                <a href="shop.html">
+                <router-link :to="{ name: 'ProdcutDetail', params: { obj: item.f } }">
                   <img src="img/bg-img/1.jpg" alt />
                   <!-- Hover Content -->
                   <div class="hover-content">
@@ -21,10 +21,10 @@
                     <p>{{ item.f.price }}$</p>
                     <h4>{{ item.f.name }}</h4>
                   </div>
-                </a>
+                </router-link>
               </div>
               <div class="w3-col m4 single-products-catagory clearfix w3-animate-zoom">
-                <a href="shop.html">
+                <router-link :to="{ name: 'ProdcutDetail', params: { obj: item.s } }">
                   <img src="img/bg-img/1.jpg" alt />
                   <!-- Hover Content -->
                   <div class="hover-content">
@@ -32,10 +32,10 @@
                     <p>{{ item.s.price }}$</p>
                     <h4>{{ item.s.name }}</h4>
                   </div>
-                </a>
+                </router-link>
               </div>
               <div class="w3-col m4 single-products-catagory clearfix w3-animate-right">
-                <a href="shop.html">
+                <router-link :to="{ name: 'ProdcutDetail', params: { obj: item.t } }">
                   <img src="img/bg-img/1.jpg" alt />
                   <!-- Hover Content -->
                   <div class="hover-content">
@@ -43,7 +43,7 @@
                     <p>{{ item.t.price }}$</p>
                     <h4>{{ item.t.name }}</h4>
                   </div>
-                </a>
+                </router-link>
               </div>
             </div>
           </div>
@@ -67,7 +67,9 @@ export default {
     };
   },
   mounted() {
-    this.axios.get("/api/part/top/9").then(data => (this.top = data.data));
+    this.axios.get("/api/part/top/9").then(data => {
+      this.top = data.data;
+    });
   }
 };
 </script>
