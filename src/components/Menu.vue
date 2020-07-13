@@ -24,9 +24,9 @@
       </div>
       <!-- Logo -->
       <div class="logo">
-        <a href="index.html">
+        <router-link to="/">
           <img src="img/core-img/logo.png" alt />
-        </a>
+        </router-link>
       </div>
       <!-- Amado Nav -->
       <nav class="amado-nav">

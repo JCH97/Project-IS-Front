@@ -6,10 +6,14 @@ import store from "./store";
 import axios from 'axios'
 import vueAxios from 'vue-axios'
 import flashMessage from "@smartweb/vue-flash-message";
+import BootstrapVue from 'bootstrap-vue'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 Vue.config.productionTip = false;
 Vue.use(vueAxios, axios)
 Vue.use(flashMessage);
+Vue.use(BootstrapVue)
 
 axios.defaults.baseURL = "http://localhost:3000"
 
