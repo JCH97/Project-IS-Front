@@ -5,21 +5,10 @@ node_modules
 # local env files
 .env.local
 .env.*.local
-*.min.css
-*.min.js
-*.ttf
-*.woff
-*.woff2
-*.eot
-*.svg
-*.less
-*.scss
-*.otf
 *.jpg
 *.ico
 *.png
 *.jpeg
-*.css.map
 
 # Log files
 npm-debug.log*
