@@ -1,5 +1,6 @@
 <template>
   <div>
+    <ModalCreateProduct />
     <div class="main-content-wrapper d-flex clearfix">
       <Menu />
       <div class="shop_sidebar_area">
@@ -124,10 +125,12 @@
 
 <script>
 import Menu from "@/components/Menu.vue";
+import ModalCreateProduct from "@/components/shop/ModalCreateProduct.vue";
 export default {
   name: "Principal",
   components: {
-    Menu
+    Menu,
+    ModalCreateProduct
   },
   data() {
     return {
