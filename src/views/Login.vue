@@ -102,7 +102,6 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
 export default {
   name: "Login",
   data() {
@@ -125,7 +124,10 @@ export default {
           data: this.data
         })
         .then(res => {
-          this.setTokens(res.data);
+          localStorage.setItem("accessToken", res.data.accessToken);
+          localStorage.setItem("refreshToken", res.data.refreshToken);
+          localStorage.setItem("user", JSON.stringify(res.data.toWork));
+
           this.$router.push("/");
         })
         .catch(err => {
@@ -173,8 +175,7 @@ export default {
 
         document.querySelector("#password").type = "password";
       }
-    },
-    ...mapActions(["setTokens"])
+    }
   }
 };
 </script>

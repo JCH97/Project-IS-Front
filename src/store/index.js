@@ -6,11 +6,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     products: [],
-    user: {
-      log: undefined,
-      cart: [] // [{ product1, quantity1 }, { prodcut2, quantity2 }, ... ]
-    },
-    tokens: undefined
+    cartUserLog: [] // [{ product1, quantity1 }, { prodcut2, quantity2 }, ... 
   },
   mutations: {
     setProduct(state, prod) {
@@ -24,12 +20,11 @@ export default new Vuex.Store({
       state.tokens = tokens;
     },
     addToCart(state, data) {
-      state.user.cart.push(data);
+      state.cartUserLog.push(data);
     }
   },
   actions: {
     setProduct: function ({ commit }) {
-      //petition to the server
       commit('setProduct', {});
     },
     setUser: function ({ commit }, user) {

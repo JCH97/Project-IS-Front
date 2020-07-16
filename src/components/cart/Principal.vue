@@ -21,7 +21,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(item) in user.cart" :key="item.product._id">
+                    <tr v-for="(item) in cartUserLog" :key="item.product._id">
                       <td class="cart_product_img">
                         <img :src="item.product.pictureUrl" alt="Product" />
                       </td>
@@ -84,7 +84,7 @@ export default {
   methods: {
     calcCost() {
       let totalPrice = 0;
-      this.user.cart.forEach(e => {
+      this.cartUserLog.forEach(e => {
         totalPrice += e.product.price * e.quantity;
       });
 
@@ -93,7 +93,7 @@ export default {
     getCostToDelivery() {}
   },
   computed: {
-    ...mapState(["user", "tokens"])
+    ...mapState(["cartUserLog"])
   }
 };
 </script>

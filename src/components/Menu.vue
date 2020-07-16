@@ -37,22 +37,22 @@
           <li id="li-shop" @click="changeClassMenu('li-shop')">
             <router-link to="/shop">Shop</router-link>
           </li>
-          <div v-if="user.log">
-            <li id="li-product" @click="changeClassMenu('li-product')">
-              <a href="product-details.html">Product</a>
-            </li>
+          <div v-if="user">
             <li id="li-cart" @click="changeClassMenu('li-cart')">
-              <a href="cart.html">Cart</a>
+              <router-link to="/cart">
+                Cart
+                <span class="w3-badge w3-orange">{{ this.cartUserLog.length }}</span>
+              </router-link>
             </li>
             <li id="li-checkout" @click="changeClassMenu('li-checkout')">
               <a href="checkout.html">Checkout</a>
             </li>
           </div>
-          <li v-if="!user.log">
+          <li v-if="!user">
             <router-link to="/authenticate">Login</router-link>
           </li>
           <li v-else>
-            <p>Bienvenido, {{ this.user.log.userName }}</p>
+            <p>Bienvenido, {{ this.user.userName }}</p>
           </li>
         </ul>
       </nav>
@@ -85,6 +85,14 @@
 import { mapState } from "vuex";
 export default {
   name: "Menu",
+  data() {
+    return {
+      user: {}
+    };
+  },
+  created() {
+    this.user = JSON.parse(localStorage.getItem("user"));
+  },
   methods: {
     changeClass() {
       let d = document.querySelector("header");
@@ -98,7 +106,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(["user"])
+    ...mapState(["cartUserLog"])
   }
 };
 </script>
