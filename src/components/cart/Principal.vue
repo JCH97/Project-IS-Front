@@ -62,7 +62,10 @@
                   </li>
                 </ul>
                 <div class="cart-btn mt-100">
-                  <a href="cart.html" class="btn amado-btn w-100">Checkout</a>
+                  <!-- <a href="cart.html" class="btn amado-btn w-100">Checkout</a> -->
+                  <b-button variant="outline-warning" class="btn amado-btn w-100">
+                    <h4>CHECKOUT</h4>
+                  </b-button>
                 </div>
               </div>
             </div>
@@ -89,7 +92,9 @@ export default {
 
       return totalPrice + this.getCostToDelivery();
     },
-    getCostToDelivery() {}
+    getCostToDelivery() {
+      return 0;
+    }
   },
   computed: {
     cartUserLog() {
