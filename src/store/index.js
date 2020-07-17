@@ -8,16 +8,14 @@ export default new Vuex.Store({
     lengthCart: 0 // [{ product1, quantity1 }, { prodcut2, quantity2 }, ... 
   },
   mutations: {
-    addToCart(state, len) {
+    setLength(state, len) {
+      console.log(`from vuex length Cart ${len}`)
       state.lengthCart = len;
     }
   },
   actions: {
-    addToCart: function ({ commit }, data) { //data = { product: Object, quantity: number }
+    addToCart: function ({ dispatch }, data) { //data = { product: Object, quantity: number }
       let cart = Array.from(JSON.parse(localStorage.getItem('cartUserLog') || JSON.stringify([])));
-
-      let len = 0;
-      cart.forEach(e => { len += e.quantity });
 
       let obj = cart.find(e => e.product._id === data.product._id);
       if (obj)
@@ -27,7 +25,14 @@ export default new Vuex.Store({
 
       localStorage.setItem('cartUserLog', JSON.stringify(cart));
 
-      commit('addToCart', len + 1);
+      dispatch('setLength');
+    },
+    setLength: function ({ commit }) {
+      let cart = Array.from(JSON.parse(localStorage.getItem('cartUserLog')));
+      let len = 0;
+      cart.forEach(e => { len += e.quantity });
+
+      commit('setLength', len);
     }
   },
   modules: {}

@@ -23,7 +23,7 @@
                   <tbody>
                     <tr v-for="(item) in cartUserLog" :key="item.product._id">
                       <td class="cart_product_img">
-                        <img :src="item.product.pictureUrl" alt="Product" />
+                        <img :src="item.product.pictureUrl" alt="Photo" />
                       </td>
                       <td class="cart_product_desc">
                         <h5>{{ item.product.name }}</h5>
@@ -35,7 +35,16 @@
                         <div class="qty-btn d-flex">
                           <p>Qty</p>
                           <div class="quantity">
-                            <p>{{ item.quantity }}</p>
+                            <p>
+                              {{ item.quantity }}
+                              <router-link to>
+                                <b-icon-trash-fill
+                                  class="ml-2"
+                                  variant="danger"
+                                  @click="deleteProdCart(item)"
+                                ></b-icon-trash-fill>
+                              </router-link>
+                            </p>
                           </div>
                         </div>
                       </td>
@@ -78,10 +87,21 @@
 
 <script>
 import Menu from "@/components/Menu.vue";
+import { mapActions } from "vuex";
 export default {
   name: "Principal",
   components: {
     Menu
+  },
+  data() {
+    return {
+      cartUserLog: []
+    };
+  },
+  mounted() {
+    this.cartUserLog = JSON.parse(
+      localStorage.getItem("cartUserLog") || JSON.stringify([])
+    );
   },
   methods: {
     calcCost() {
@@ -94,16 +114,23 @@ export default {
     },
     getCostToDelivery() {
       return 0;
-    }
-  },
-  computed: {
-    cartUserLog() {
-      let arr = JSON.parse(
-        localStorage.getItem("cartUserLog") || JSON.stringify([])
+    },
+    deleteProdCart(toDelete) {
+      //toDelete: { product: Object, quantity: Number }
+      let obj = this.cartUserLog.find(
+        e => e.product._id === toDelete.product._id
       );
+      let indx = this.cartUserLog.indexOf(obj);
 
-      return arr;
-    }
+      if (this.cartUserLog[indx].quantity === 1)
+        this.cartUserLog.splice(obj, 1);
+      else this.cartUserLog[indx].quantity -= 1;
+
+      localStorage.setItem("cartUserLog", JSON.stringify(this.cartUserLog));
+
+      this.setLength();
+    },
+    ...mapActions(["setLength"])
   }
 };
 </script>

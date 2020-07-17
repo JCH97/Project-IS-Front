@@ -41,7 +41,7 @@
             <li id="li-cart" @click="changeClassMenu('li-cart')">
               <router-link to="/cart">
                 Cart
-                <span class="w3-badge w3-orange">{{ Math.max(this.lengthCart, this.amount) }}</span>
+                <span class="w3-badge w3-orange">{{ this.lengthCart }}</span>
               </router-link>
             </li>
             <li id="li-checkout" @click="changeClassMenu('li-checkout')">
@@ -87,17 +87,15 @@ export default {
   name: "Menu",
   data() {
     return {
-      user: {},
-      cartUserLog: []
+      user: {}
     };
   },
   mounted() {
     this.user = JSON.parse(
       localStorage.getItem("user") || JSON.stringify(null)
     );
-    this.cartUserLog = JSON.parse(
-      localStorage.getItem("cartUserLog") || JSON.stringify([])
-    );
+
+    this.setLength();
   },
   methods: {
     changeClass() {
@@ -110,17 +108,9 @@ export default {
       document.querySelector("li.active").classList.remove("active");
       document.querySelector(`#${id}`).classList.add("active");
     },
-    ...mapActions(["addToCart"])
+    ...mapActions(["addToCart", "setLength"])
   },
   computed: {
-    amount() {
-      let ans = 0;
-      this.cartUserLog.forEach(e => {
-        ans += e.quantity;
-      });
-
-      return ans;
-    },
     ...mapState(["lengthCart"])
   }
 };
