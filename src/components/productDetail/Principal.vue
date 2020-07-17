@@ -94,11 +94,13 @@
                       </span>
                     </div>
                   </div>
-                  <button
-                    name="addtocart"
+                  <b-button
                     class="btn amado-btn"
+                    variant="outline-warning"
                     @click="addToCart({product, quantity})"
-                  >Add to cart</button>
+                  >
+                    <h4>Add to Cart</h4>
+                  </b-button>
                 </div>
               </div>
             </div>
