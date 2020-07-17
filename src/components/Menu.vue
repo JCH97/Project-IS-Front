@@ -82,16 +82,21 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
 export default {
   name: "Menu",
   data() {
     return {
-      user: {}
+      user: {},
+      cartUserLog: []
     };
   },
   created() {
-    this.user = JSON.parse(localStorage.getItem("user"));
+    this.user = JSON.parse(
+      localStorage.getItem("user") || JSON.stringify(null)
+    );
+    this.cartUserLog = JSON.parse(
+      localStorage.getItem("cartUserLog") || JSON.stringify([])
+    );
   },
   methods: {
     changeClass() {
@@ -106,7 +111,11 @@ export default {
     }
   },
   computed: {
-    ...mapState(["cartUserLog"])
+    lengthCart() {
+      return JSON.parse(
+        localStorage.getItem("cartUserLog") || JSON.stringify([])
+      );
+    }
   }
 };
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ModalCreateProduct />
+    <ModalCreateProduct :idCar="modelsOfBrand[parseInt(selectedBrandModel.model)]" />
     <div class="main-content-wrapper d-flex clearfix">
       <Menu />
       <div class="shop_sidebar_area">
@@ -46,7 +46,20 @@
               <div class="product-topbar d-xl-flex align-items-end justify-content-between">
                 <!-- Total Products -->
                 <div class="total-products">
-                  <p>Showing {{ this.perPage * (this.page - 1) + 1 }} - {{ this.page * this.perPage }} 0f {{ this.numberOfPages }} {{ this.selectedBrandModel.brand }} / {{ this.selectedBrandModel.model }}</p>
+                  <p class="h1">
+                    Showing {{ this.perPage * (this.page - 1) + 1 }} - {{ this.page * this.perPage }} 0f {{ this.numberOfPages }} [ {{ this.selectedBrandModel.brand }} / {{ this.selectedBrandModel.model }} ]
+                    <router-link
+                      to
+                      v-if="isAdmin && selectedBrandModel.brand && selectedBrandModel.model"
+                    >
+                      <b-icon-gear-wide-connected
+                        v-b-modal.modalCreateProduct
+                        v-b-tooltip.hover.right
+                        title="Add new product"
+                        variant="danger"
+                      ></b-icon-gear-wide-connected>
+                    </router-link>
+                  </p>
                 </div>
               </div>
             </div>
@@ -69,9 +82,9 @@
                   <div class="product-meta-data">
                     <div class="line"></div>
                     <p class="product-price">${{ item.price }}</p>
-                    <a href="product-details.html">
-                      <h6>{{ item.description }}</h6>
-                    </a>
+                    <router-link :to="{ name: 'ProductDetail', params: { obj: item} }">
+                      <h6>{{ item.name }}</h6>
+                    </router-link>
                   </div>
                   <!-- Ratings & Cart -->
                   <div class="ratings-cart text-right">
@@ -83,15 +96,22 @@
                       <i class="fa fa-star" aria-hidden="true"></i>
                     </div>
                     <div class="cart">
-                      <a
-                        href="cart.html"
-                        data-toggle="tooltip"
-                        data-placement="left"
-                        title="Add to Cart"
-                      >
-                        <img src="img/core-img/cart.png" alt />
-                      </a>
+                      <router-link to v-b-tooltip.hover.left title="Add to cart">
+                        <img
+                          src="img/core-img/cart.png"
+                          @click="addToCart({product: item, quantity:1})"
+                        />
+                      </router-link>
                     </div>
+                    <router-link
+                      v-if="isAdmin && selectedBrandModel.brand && selectedBrandModel.model"
+                      class="w3-padding-tiny"
+                      to
+                      v-b-tooltip.hover.right
+                      title="Edit product"
+                    >
+                      <b-icon-pencil></b-icon-pencil>
+                    </router-link>
                   </div>
                 </div>
               </div>
@@ -126,11 +146,15 @@
 <script>
 import Menu from "@/components/Menu.vue";
 import ModalCreateProduct from "@/components/shop/ModalCreateProduct.vue";
+import { mapActions } from "vuex";
 export default {
   name: "Principal",
   components: {
     Menu,
     ModalCreateProduct
+  },
+  props: {
+    isAdmin: Boolean
   },
   data() {
     return {
@@ -215,7 +239,8 @@ export default {
         }
 
       document.querySelector(`#n${newNumber}`).classList.add("active");
-    }
+    },
+    ...mapActions(["addToCart"])
   }
 };
 </script>

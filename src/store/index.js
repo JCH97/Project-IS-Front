@@ -34,8 +34,12 @@ export default new Vuex.Store({
       commit('setTokens', tokens);
       dispatch('setUser', tokens.toWork)
     },
-    addToCart: function ({ commit }, data) { //data = { product, quantity }
-      commit('addToCart', data);
+    addToCart: function ({ commit }, data) { //data = { product: Object, quantity: number }
+      let cart = JSON.parse(localStorage.getItem('cartUserLog') || JSON.stringify([]));
+      cart.push(JSON.stringify(data));
+      localStorage.setItem('cartUserLog', JSON.stringify(cart));
+
+      console.log(commit);
     }
   },
   modules: {}

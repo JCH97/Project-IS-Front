@@ -13,7 +13,7 @@
           <div class="w3-row">
             <div class="w3-row-padding w3-padding" v-for="(item) in top" :key="item._id">
               <div class="w3-col m4 single-products-catagory clearfix w3-animate-left">
-                <router-link :to="{ name: 'ProdcutDetail', params: { obj: item.f } }">
+                <router-link :to="{ name: 'ProductDetail', params: { obj: item.f } }">
                   <img src="img/bg-img/1.jpg" alt />
                   <!-- Hover Content -->
                   <div class="hover-content">
@@ -24,7 +24,7 @@
                 </router-link>
               </div>
               <div class="w3-col m4 single-products-catagory clearfix w3-animate-zoom">
-                <router-link :to="{ name: 'ProdcutDetail', params: { obj: item.s } }">
+                <router-link :to="{ name: 'ProductDetail', params: { obj: item.s } }">
                   <img src="img/bg-img/1.jpg" alt />
                   <!-- Hover Content -->
                   <div class="hover-content">
@@ -35,7 +35,7 @@
                 </router-link>
               </div>
               <div class="w3-col m4 single-products-catagory clearfix w3-animate-right">
-                <router-link :to="{ name: 'ProdcutDetail', params: { obj: item.t } }">
+                <router-link :to="{ name: 'ProductDetail', params: { obj: item.t } }">
                   <img src="img/bg-img/1.jpg" alt />
                   <!-- Hover Content -->
                   <div class="hover-content">

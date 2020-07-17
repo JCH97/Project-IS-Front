@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Principal />
+    <Principal :isAdmin="isAdmin" />
     <Footer />
   </div>
 </template>
@@ -13,6 +13,16 @@ export default {
   components: {
     Principal,
     Footer
+  },
+  data() {
+    return {
+      isAdmin: false
+    };
+  },
+  created() {
+    this.isAdmin = JSON.parse(
+      localStorage.getItem("user") || JSON.stringify("false")
+    ).isAdmin;
   }
 };
 </script>

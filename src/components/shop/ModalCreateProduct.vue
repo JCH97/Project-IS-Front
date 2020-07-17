@@ -1,7 +1,13 @@
 <template>
   <div>
     <!-- <b-button v-b-modal.modalCreateProduct>Open First Modal</b-button> -->
-    <b-modal id="modalCreateProduct" title="Create product" ok-only hide-footer>
+    <b-modal
+      id="modalCreateProduct"
+      ref="modalCreateProduct"
+      title="Create product"
+      ok-only
+      hide-footer
+    >
       <b-form-group>
         <b-form-text id="name-help">Ingrese el nombre del producto.</b-form-text>
         <b-form-input
@@ -85,9 +91,11 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
 export default {
   name: "ModalCreateProduct",
+  props: {
+    idCar: String
+  },
   data() {
     return {
       data: {
@@ -97,16 +105,21 @@ export default {
         description: "",
         price: 0,
         stock: 0,
-        pictureUrl: ""
+        pictureUrl: "",
+        car: ""
       },
       file: ""
     };
   },
   methods: {
     saveProduct() {
+      this.$refs["modalCreateProduct"].hide();
+      this.data.car = this.idCar;
       this.axios.post("/api/part", this.data, {
         headers: {
-          "x-access-token": this.tokens.accessToken
+          "x-access-token": localStorage.getItem(
+            "accessToken" || JSON.stringify("")
+          )
         }
       });
     },
@@ -122,7 +135,9 @@ export default {
       this.axios
         .post("/api/part/uploadImage", fromData, {
           headers: {
-            "x-access-token": this.tokens.accessToken
+            "x-access-token": localStorage.getItem(
+              "accessToken" || JSON.stringify()
+            )
           }
         })
         .then(res => {
@@ -130,8 +145,6 @@ export default {
         });
     }
   },
-  computed: {
-    ...mapState(["tokens"])
-  }
+  computed: {}
 };
 </script>

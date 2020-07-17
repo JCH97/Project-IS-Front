@@ -28,7 +28,7 @@ const routes = [
   },
   {
     path: "/productDetail/:obj",
-    name: "ProdcutDetail",
+    name: "ProductDetail",
     component: ProductDetail,
     props: true
   },
