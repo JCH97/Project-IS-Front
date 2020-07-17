@@ -38,22 +38,21 @@
             <router-link to="/shop">Shop</router-link>
           </li>
           <div v-if="user">
-            <li id="li-cart" @click="changeClassMenu('li-cart')">
+            <li v-if="lengthCart > 0" id="li-cart" @click="changeClassMenu('li-cart')">
               <router-link to="/cart">
                 Cart
                 <span class="w3-badge w3-orange">{{ this.lengthCart }}</span>
               </router-link>
             </li>
-            <li id="li-checkout" @click="changeClassMenu('li-checkout')">
-              <a href="checkout.html">Checkout</a>
+          </div>
+          <div class="mt-5">
+            <li v-if="!user">
+              <router-link to="/authenticate">Login</router-link>
+            </li>
+            <li v-else>
+              <p>Bienvenido, {{ this.user.userName }}</p>
             </li>
           </div>
-          <li v-if="!user">
-            <router-link to="/authenticate">Login</router-link>
-          </li>
-          <li v-else>
-            <p>Bienvenido, {{ this.user.userName }}</p>
-          </li>
         </ul>
       </nav>
       <!-- Button Group -->

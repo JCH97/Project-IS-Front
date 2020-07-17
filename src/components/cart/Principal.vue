@@ -1,5 +1,6 @@
 <template>
   <div>
+    <FlashMessage></FlashMessage>
     <div class="main-content-wrapper d-flex clearfix">
       <Menu />
       <div class="cart-table-area section-padding-100">
@@ -59,11 +60,11 @@
                 <ul class="summary-table">
                   <li>
                     <span>subtotal:</span>
-                    <span>${{ this.calcCost() - this.getCostToDelivery() }}</span>
+                    <span>${{ this.calcCost() - this.costToDelivery }}</span>
                   </li>
                   <li>
                     <span>delivery:</span>
-                    <span>{{ this.getCostToDelivery() }}</span>
+                    <span>{{ this.costToDelivery }}</span>
                   </li>
                   <li>
                     <span>total:</span>
@@ -72,13 +73,14 @@
                 </ul>
                 <div class="cart-btn mt-100">
                   <!-- <a href="cart.html" class="btn amado-btn w-100">Checkout</a> -->
-                  <b-button variant="outline-warning" class="btn amado-btn w-100">
+                  <b-button variant="outline-warning" class="btn amado-btn w-100" @click="sendMail">
                     <h4>CHECKOUT</h4>
                   </b-button>
                 </div>
               </div>
             </div>
           </div>
+          <DeliveryToHome @destinyToDelivery="setCostToDelivery" />
         </div>
       </div>
     </div>
@@ -87,15 +89,18 @@
 
 <script>
 import Menu from "@/components/Menu.vue";
+import DeliveryToHome from "@/components/cart/DeliveryToHome.vue";
 import { mapActions } from "vuex";
 export default {
   name: "Principal",
   components: {
-    Menu
+    Menu,
+    DeliveryToHome
   },
   data() {
     return {
-      cartUserLog: []
+      cartUserLog: [],
+      costToDelivery: 0
     };
   },
   mounted() {
@@ -110,10 +115,11 @@ export default {
         totalPrice += parseFloat(e.product.price) * parseFloat(e.quantity);
       });
 
-      return totalPrice + this.getCostToDelivery();
+      return totalPrice + this.costToDelivery;
     },
-    getCostToDelivery() {
-      return 0;
+    setCostToDelivery(value) {
+      //console.log(`from cart principal ${Object.keys(value)[0]}`);
+      this.costToDelivery = value[Object.keys(value)[0]];
     },
     deleteProdCart(toDelete) {
       //toDelete: { product: Object, quantity: Number }
@@ -129,6 +135,29 @@ export default {
       localStorage.setItem("cartUserLog", JSON.stringify(this.cartUserLog));
 
       this.setLength();
+    },
+    sendMail() {
+      let data = {
+        subject: "Solicitud de compra por internet",
+        text: ""
+      };
+
+      this.axios
+        .post("/api/sendMail", data)
+        .then(() => {
+          this.flashMessage.success({
+            title: "Confirmacion de envio",
+            message: "Solicitud enviada satisfactoriamente"
+          });
+          localStorage.removeItem("cartUserLog");
+          this.$router.push("/");
+        })
+        .catch(err => {
+          this.flashMessage.error({
+            title: "Error!!!!",
+            message: err.response.data.error
+          });
+        });
     },
     ...mapActions(["setLength"])
   }
