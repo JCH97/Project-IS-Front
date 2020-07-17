@@ -41,7 +41,7 @@
             <li id="li-cart" @click="changeClassMenu('li-cart')">
               <router-link to="/cart">
                 Cart
-                <span class="w3-badge w3-orange">{{ this.cartUserLog.length }}</span>
+                <span class="w3-badge w3-orange">{{ Math.max(this.lengthCart, this.amount) }}</span>
               </router-link>
             </li>
             <li id="li-checkout" @click="changeClassMenu('li-checkout')">
@@ -82,6 +82,7 @@
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
 export default {
   name: "Menu",
   data() {
@@ -90,7 +91,7 @@ export default {
       cartUserLog: []
     };
   },
-  created() {
+  mounted() {
     this.user = JSON.parse(
       localStorage.getItem("user") || JSON.stringify(null)
     );
@@ -108,14 +109,19 @@ export default {
     changeClassMenu(id) {
       document.querySelector("li.active").classList.remove("active");
       document.querySelector(`#${id}`).classList.add("active");
-    }
+    },
+    ...mapActions(["addToCart"])
   },
   computed: {
-    lengthCart() {
-      return JSON.parse(
-        localStorage.getItem("cartUserLog") || JSON.stringify([])
-      );
-    }
+    amount() {
+      let ans = 0;
+      this.cartUserLog.forEach(e => {
+        ans += e.quantity;
+      });
+
+      return ans;
+    },
+    ...mapState(["lengthCart"])
   }
 };
 </script>

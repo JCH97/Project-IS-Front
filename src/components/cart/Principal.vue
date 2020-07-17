@@ -75,7 +75,6 @@
 
 <script>
 import Menu from "@/components/Menu.vue";
-import { mapState } from "vuex";
 export default {
   name: "Principal",
   components: {
@@ -83,9 +82,9 @@ export default {
   },
   methods: {
     calcCost() {
-      let totalPrice = 0;
+      let totalPrice = parseFloat(0);
       this.cartUserLog.forEach(e => {
-        totalPrice += e.product.price * e.quantity;
+        totalPrice += parseFloat(e.product.price) * parseFloat(e.quantity);
       });
 
       return totalPrice + this.getCostToDelivery();
@@ -93,7 +92,13 @@ export default {
     getCostToDelivery() {}
   },
   computed: {
-    ...mapState(["cartUserLog"])
+    cartUserLog() {
+      let arr = JSON.parse(
+        localStorage.getItem("cartUserLog") || JSON.stringify([])
+      );
+
+      return arr;
+    }
   }
 };
 </script>

@@ -5,41 +5,29 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    products: [],
-    cartUserLog: [] // [{ product1, quantity1 }, { prodcut2, quantity2 }, ... 
+    lengthCart: 0 // [{ product1, quantity1 }, { prodcut2, quantity2 }, ... 
   },
   mutations: {
-    setProduct(state, prod) {
-      state.products = prod;
-    },
-    setUser(state, user) {
-      state.user.log = user;
-      state.user.cart = [];
-    },
-    setTokens(state, tokens) {
-      state.tokens = tokens;
-    },
-    addToCart(state, data) {
-      state.cartUserLog.push(data);
+    addToCart(state, len) {
+      state.lengthCart = len;
     }
   },
   actions: {
-    setProduct: function ({ commit }) {
-      commit('setProduct', {});
-    },
-    setUser: function ({ commit }, user) {
-      commit('setUser', user)
-    },
-    setTokens: function ({ commit, dispatch }, tokens) {
-      commit('setTokens', tokens);
-      dispatch('setUser', tokens.toWork)
-    },
     addToCart: function ({ commit }, data) { //data = { product: Object, quantity: number }
-      let cart = JSON.parse(localStorage.getItem('cartUserLog') || JSON.stringify([]));
-      cart.push(JSON.stringify(data));
+      let cart = Array.from(JSON.parse(localStorage.getItem('cartUserLog') || JSON.stringify([])));
+
+      let len = 0;
+      cart.forEach(e => { len += e.quantity });
+
+      let obj = cart.find(e => e.product._id === data.product._id);
+      if (obj)
+        cart[cart.indexOf(obj)].quantity++;
+      else
+        cart.push(data);
+
       localStorage.setItem('cartUserLog', JSON.stringify(cart));
 
-      console.log(commit);
+      commit('addToCart', len + 1);
     }
   },
   modules: {}
