@@ -125,13 +125,24 @@ export default {
     saveProduct() {
       this.$refs["modalCreateProduct"].hide();
       this.data.car = this.idCar;
-      this.axios.post("/api/part", this.data, {
-        headers: {
-          "x-access-token": localStorage.getItem(
-            "accessToken" || JSON.stringify("")
-          )
-        }
-      });
+      this.axios
+        .post("/api/part", this.data, {
+          headers: {
+            "x-access-token": localStorage.getItem(
+              "accessToken" || JSON.stringify("")
+            )
+          }
+        })
+        .then(res => {
+          this.$emit("addNewProduct", res.data);
+
+          let keys = Object.keys(this.data);
+          for (let i = 0; i < keys.length; i++) {
+            this.data[keys[i]] =
+              keys[i] === "price" || keys[i] === "stock" ? 0 : "";
+          }
+          this.file = "";
+        });
     },
     onSelect() {
       this.file = this.$refs.file.files[0];

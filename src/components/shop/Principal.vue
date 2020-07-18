@@ -1,6 +1,9 @@
 <template>
   <div>
-    <ModalCreateProduct :idCar="modelsOfBrand[selectedBrandModel.model]" />
+    <ModalCreateProduct
+      @addNewProduct="addProductToList"
+      :idCar="modelsOfBrand[selectedBrandModel.model]"
+    />
     <ModalEditProduct
       @productEdited="fixEditedProduct"
       :idCar="modelsOfBrand[selectedBrandModel.model]"
@@ -111,6 +114,14 @@
                       <i class="fa fa-star" aria-hidden="true"></i>
                       <i class="fa fa-star" aria-hidden="true"></i>
                       <i class="fa fa-star" aria-hidden="true"></i>
+                    </div>
+                    <div class="cart">
+                      <router-link to v-b-tooltip.hover.left title="Add to cart">
+                        <img
+                          src="img/core-img/cart.png"
+                          @click="addToCart({product: item, quantity:1})"
+                        />
+                      </router-link>
                     </div>
                     <router-link
                       to
@@ -268,6 +279,9 @@ export default {
     },
     addNewBrandModels(brand) {
       if (this.brands.findIndex(brand) === -1) this.brands.push(brand);
+    },
+    addProductToList(prod) {
+      this.parts.push(prod);
     },
     ...mapActions(["addToCart"])
   }
