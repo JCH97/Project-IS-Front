@@ -1,19 +1,29 @@
 <template>
   <div>
-    <ModalCreateProduct :idCar="modelsOfBrand[parseInt(selectedBrandModel.model)]" />
+    <ModalCreateProduct :idCar="modelsOfBrand[selectedBrandModel.model]" />
     <ModalEditProduct
       @productEdited="fixEditedProduct"
-      :idCar="modelsOfBrand[parseInt(selectedBrandModel.model)]"
+      :idCar="modelsOfBrand[selectedBrandModel.model]"
       :toEdit="toEdit"
     />
-
+    <ModalCreateBrandModel @newBrandModels="addNewBrandModels" />
     <div class="main-content-wrapper d-flex clearfix">
       <Menu />
       <div class="shop_sidebar_area">
         <!-- ##### Single Widget ##### -->
         <div class="widget catagory mb-50">
           <!-- Widget Title -->
-          <h6 class="widget-title mb-30">Brands' list:</h6>
+          <h6 class="widget-title mb-30">
+            Brands' list:
+            <router-link to>
+              <b-icon-plus
+                class="h1 mb-2"
+                v-b-modal.modalCreateBrandModel
+                v-b-tooltip.hover.right
+                title="Add new brand"
+              ></b-icon-plus>
+            </router-link>
+          </h6>
 
           <!--  Catagories  -->
           <div class="catagories-menu">
@@ -62,6 +72,7 @@
                         v-b-modal.modalCreateProduct
                         v-b-tooltip.hover.right
                         title="Add new product"
+                        class="h5 mb-1"
                         variant="danger"
                       ></b-icon-gear-wide-connected>
                     </router-link>
@@ -109,6 +120,7 @@
                         @click="sendToEdit(item)"
                         v-b-modal.modalEditProduct
                         v-b-tooltip.hover.right
+                        class="h5"
                         title="Edit product"
                         variant="success"
                       ></b-icon-pencil>
@@ -148,13 +160,15 @@
 import Menu from "@/components/Menu.vue";
 import ModalCreateProduct from "@/components/shop/ModalCreateProduct.vue";
 import ModalEditProduct from "@/components/shop/ModalEditProduct.vue";
+import ModalCreateBrandModel from "@/components/shop/ModalCreateBrandModel.vue";
 import { mapActions } from "vuex";
 export default {
   name: "Principal",
   components: {
     Menu,
     ModalCreateProduct,
-    ModalEditProduct
+    ModalEditProduct,
+    ModalCreateBrandModel
   },
   props: {
     isAdmin: Boolean
@@ -251,6 +265,9 @@ export default {
     fixEditedProduct(prod) {
       let indx = this.parts.findIndex(e => e._id === prod._id);
       if (indx > -1) this.parts[indx] = prod;
+    },
+    addNewBrandModels(brand) {
+      if (this.brands.findIndex(brand) === -1) this.brands.push(brand);
     },
     ...mapActions(["addToCart"])
   }

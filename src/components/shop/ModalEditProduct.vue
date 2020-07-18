@@ -77,20 +77,6 @@
         <b-button variant="outline-success" block @click="saveProduct()">Guardar</b-button>
       </b-form-group>
     </b-modal>
-
-    <b-modal ref="modalPhoto" id="modalAddPhoto" size="md" title="Agregar foto" ok-only hide-footer>
-      <form @submit.prevent="saveImage()" enctype="multipart/form-data">
-        <input
-          class="mb-4"
-          ref="file"
-          type="file"
-          name="image"
-          accept="image/*"
-          @change="onSelect()"
-        />
-        <b-button variant="outline-success" block @click="saveImage()">Guardar</b-button>
-      </form>
-    </b-modal>
   </div>
 </template>
 
