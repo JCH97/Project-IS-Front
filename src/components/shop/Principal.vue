@@ -1,6 +1,12 @@
 <template>
   <div>
     <ModalCreateProduct :idCar="modelsOfBrand[parseInt(selectedBrandModel.model)]" />
+    <ModalEditProduct
+      @productEdited="fixEditedProduct"
+      :idCar="modelsOfBrand[parseInt(selectedBrandModel.model)]"
+      :toEdit="toEdit"
+    />
+
     <div class="main-content-wrapper d-flex clearfix">
       <Menu />
       <div class="shop_sidebar_area">
@@ -95,22 +101,17 @@
                       <i class="fa fa-star" aria-hidden="true"></i>
                       <i class="fa fa-star" aria-hidden="true"></i>
                     </div>
-                    <div class="cart">
-                      <router-link to v-b-tooltip.hover.left title="Add to cart">
-                        <img
-                          src="img/core-img/cart.png"
-                          @click="addToCart({product: item, quantity:1})"
-                        />
-                      </router-link>
-                    </div>
                     <router-link
-                      v-if="isAdmin && selectedBrandModel.brand && selectedBrandModel.model"
-                      class="w3-padding-tiny"
                       to
-                      v-b-tooltip.hover.right
-                      title="Edit product"
+                      v-if="isAdmin && selectedBrandModel.brand && selectedBrandModel.model"
                     >
-                      <b-icon-pencil></b-icon-pencil>
+                      <b-icon-pencil
+                        @click="sendToEdit(item)"
+                        v-b-modal.modalEditProduct
+                        v-b-tooltip.hover.right
+                        title="Edit product"
+                        variant="success"
+                      ></b-icon-pencil>
                     </router-link>
                   </div>
                 </div>
@@ -146,12 +147,14 @@
 <script>
 import Menu from "@/components/Menu.vue";
 import ModalCreateProduct from "@/components/shop/ModalCreateProduct.vue";
+import ModalEditProduct from "@/components/shop/ModalEditProduct.vue";
 import { mapActions } from "vuex";
 export default {
   name: "Principal",
   components: {
     Menu,
-    ModalCreateProduct
+    ModalCreateProduct,
+    ModalEditProduct
   },
   props: {
     isAdmin: Boolean
@@ -167,7 +170,8 @@ export default {
       parts: [], //esta es la ventana de piezas del carro y modelo seleccionados
       page: 1,
       perPage: 6,
-      numberOfPages: 0
+      numberOfPages: 0,
+      toEdit: {}
     };
   },
   created() {
@@ -239,6 +243,14 @@ export default {
         }
 
       document.querySelector(`#n${newNumber}`).classList.add("active");
+    },
+    sendToEdit(toEdit) {
+      this.toEdit = toEdit;
+      console.log(`from shop ppal ${JSON.stringify(this.toEdit)}`);
+    },
+    fixEditedProduct(prod) {
+      let indx = this.parts.findIndex(e => e._id === prod._id);
+      if (indx > -1) this.parts[indx] = prod;
     },
     ...mapActions(["addToCart"])
   }

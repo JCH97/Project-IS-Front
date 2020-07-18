@@ -1,23 +1,17 @@
 <template>
   <div>
-    <!-- <b-button v-b-modal.modalCreateProduct>Open First Modal</b-button> -->
-    <b-modal
-      id="modalCreateProduct"
-      ref="modalCreateProduct"
-      title="Create product"
-      ok-only
-      hide-footer
-    >
+    <!-- <b-button v-b-modal.modalEditProduct>Open First Modal</b-button> -->
+    <b-modal id="modalEditProduct" ref="modalEditProduct" title="Edit product" ok-only hide-footer>
       <b-form-group>
         <b-form-text id="name-help">Ingrese el nombre del producto.</b-form-text>
         <b-form-input
           class="mb-4"
-          :state="data.name.length > 2"
+          :state="toEdit.name.length > 2"
           name="name"
           id="name"
           placeholder="Nombre"
           aria-describedby="name-help name-invalid"
-          v-model="data.name"
+          v-model="toEdit.name"
         ></b-form-input>
 
         <b-form-text id="serialNumber-help">Ingrese el numero de serie del producto</b-form-text>
@@ -27,7 +21,7 @@
           id="serialNumber"
           aria-describedby="serialNumber-help"
           placeholder="Numero de serie"
-          v-model="data.serialNumber"
+          v-model="toEdit.serialNumber"
         ></b-form-input>
 
         <b-form-text id="price-help">Ingrese el precio del producto</b-form-text>
@@ -37,8 +31,8 @@
           name="price"
           id="price"
           aria-describedby="price-help"
-          :state="data.price > 0"
-          v-model="data.price"
+          :state="toEdit.price > 0"
+          v-model="toEdit.price"
         ></b-form-input>
 
         <b-form-text id="dim-help">Ingrese las dimensiones del producto</b-form-text>
@@ -48,18 +42,18 @@
           name="dim"
           id="dim"
           aria-describedby="dim-help"
-          v-model="data.dim"
+          v-model="toEdit.dim"
         ></b-form-input>
 
-        <b-form-text id="stocks-help">Ingrese el stock del producto</b-form-text>
+        <b-form-text id="stock-help">Ingrese el stock del producto</b-form-text>
         <b-form-input
           type="number"
           class="mb-4"
           name="stock"
           id="stock"
           aria-describedby="stock-help"
-          :state="data.stock > 0"
-          v-model="data.stock"
+          :state="toEdit.stock > 0"
+          v-model="toEdit.stock"
         ></b-form-input>
 
         <b-form-text id="description-help">Ingrese la descripcion del producto</b-form-text>
@@ -67,7 +61,7 @@
           class="mb-4"
           name="description"
           id="description"
-          v-model="data.description"
+          v-model="toEdit.description"
           aria-describedby="description-help"
           no-resize
         ></b-form-textarea>
@@ -102,36 +96,30 @@
 
 <script>
 export default {
-  name: "ModalCreateProduct",
+  name: "ModalEditProduct",
   props: {
-    idCar: String
+    toEdit: Object,
+    idCart: String
   },
   data() {
     return {
-      data: {
-        name: "",
-        serialNumber: "",
-        dim: "",
-        description: "",
-        price: 0,
-        stock: 0,
-        pictureUrl: "",
-        car: ""
-      },
       file: ""
     };
   },
   methods: {
     saveProduct() {
-      this.$refs["modalCreateProduct"].hide();
-      this.data.car = this.idCar;
-      this.axios.post("/api/part", this.data, {
-        headers: {
-          "x-access-token": localStorage.getItem(
-            "accessToken" || JSON.stringify("")
-          )
-        }
-      });
+      this.$refs["modalEditProduct"].hide();
+      this.axios
+        .put(`/api/part/${this.toEdit._id}`, this.toEdit, {
+          headers: {
+            "x-access-token": localStorage.getItem(
+              "accessToken" || JSON.stringify("")
+            )
+          }
+        })
+        .then(res => {
+          this.$emit("productEdited", res.data);
+        });
     },
     onSelect() {
       this.file = this.$refs.file.files[0];
@@ -151,10 +139,9 @@ export default {
           }
         })
         .then(res => {
-          this.data.pictureUrl = res.data.image;
+          this.toEdit.pictureUrl = res.data.image;
         });
     }
-  },
-  computed: {}
+  }
 };
 </script>
