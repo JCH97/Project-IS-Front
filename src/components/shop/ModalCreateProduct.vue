@@ -101,6 +101,7 @@
 </template>
 
 <script>
+import { join } from "path";
 export default {
   name: "ModalCreateProduct",
   props: {
@@ -125,6 +126,8 @@ export default {
     saveProduct() {
       this.$refs["modalCreateProduct"].hide();
       this.data.car = this.idCar;
+      if (!this.data.pictureUrl)
+        this.data.pictureUrl = join("uploads", "parts", "notFound.jpg");
       this.axios
         .post("/api/part", this.data, {
           headers: {

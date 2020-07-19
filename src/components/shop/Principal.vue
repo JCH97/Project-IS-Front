@@ -1,5 +1,6 @@
 <template>
   <div>
+    <FlashMessage></FlashMessage>
     <ModalCreateProduct
       @addNewProduct="addProductToList"
       :idCar="modelsOfBrand[selectedBrandModel.model]"
@@ -31,13 +32,11 @@
           <!--  Catagories  -->
           <div class="catagories-menu">
             <ul>
-              <li
-                v-for="item in brands"
-                :key="item"
-                :id="item"
-                @click="changeClassInBrandList(item)"
-              >
-                <router-link to>{{ item }}</router-link>
+              <li v-for="item in brands" :key="item" :id="item">
+                <b-icon-trash v-if="isAdmin" variant="danger" @click="confirmToDelete(item, true)"></b-icon-trash>
+                <span @click="changeClassInBrandList(item)">
+                  <router-link to>{{ item }}</router-link>
+                </span>
               </li>
             </ul>
           </div>
@@ -45,13 +44,11 @@
           <h6 class="widget-title mb-30">Models' list:</h6>
           <div class="catagories-menu">
             <ol>
-              <li
-                v-for="item in Object.keys(modelsOfBrand)"
-                :key="item"
-                :id="`m${item}`"
-                @click="changeClassInModelList(item)"
-              >
-                <router-link to>{{ item }}</router-link>
+              <li v-for="item in Object.keys(modelsOfBrand)" :key="item" :id="`m${item}`">
+                <b-icon-trash v-if="isAdmin" variant="danger" @click="confirmToDelete(item, false)"></b-icon-trash>
+                <span @click="changeClassInModelList(item)">
+                  <router-link to>{{ item }}</router-link>
+                </span>
               </li>
             </ol>
           </div>
@@ -212,6 +209,7 @@ export default {
   },
   methods: {
     changeClassInBrandList(brand) {
+      console.log(`into change class brand list ${brand}`);
       //select the element with active clase for remove later
       let d = document.querySelector("li.active");
       if (d) d.classList.remove("active");
@@ -278,10 +276,64 @@ export default {
       if (indx > -1) this.parts[indx] = prod;
     },
     addNewBrandModels(brand) {
-      if (this.brands.findIndex(brand) === -1) this.brands.push(brand);
+      if (this.brands.findIndex(e => e === brand) === -1)
+        this.brands.push(brand);
     },
     addProductToList(prod) {
       this.parts.push(prod);
+    },
+    confirmToDelete(val, isBrand) {
+      this.$bvModal
+        .msgBoxConfirm(
+          "Esta seguro de la eliminacion? Se borraran todas las piezas de carros dentro de la marca o modelo a eliminar.",
+          {
+            title: "Por favor, confirmar",
+            size: "sm",
+            buttonSize: "sm",
+            okVariant: "danger",
+            okTitle: "Si",
+            cancelTitle: "NO",
+            footerClass: "p-2",
+            hideHeaderClose: false,
+            centered: true
+          }
+        )
+        .then(value => {
+          if (value) {
+            if (isBrand) {
+              this.axios.delete(`/api/car/brand/${val}`).then(() => {
+                let indx = this.brands.findIndex(e => e === val);
+                this.brands.splice(indx, 1);
+
+                if (this.selectedBrandModel.brand === val) {
+                  this.modelsOfBrand = [];
+                  this.selectedBrandModel.brand = "";
+                  this.selectedBrandModel.model = "";
+                  this.parts = [];
+                }
+              });
+            } else {
+              this.axios
+                .delete(`/api/car/${this.modelsOfBrand[val]}`)
+                .then(() => {
+                  delete this.modelsOfBrand[val];
+
+                  if (this.selectedBrandModel.model === val) {
+                    this.selectedBrandModel.model = "";
+                    this.parts = [];
+                    if (this.modelsOfBrand.length === 0)
+                      this.selectedBrandModel.brand = [];
+                  }
+                });
+            }
+          }
+        })
+        .catch(err => {
+          this.flashMessage.err({
+            title: "Error!!!!",
+            message: err
+          });
+        });
     },
     ...mapActions(["addToCart"])
   }
