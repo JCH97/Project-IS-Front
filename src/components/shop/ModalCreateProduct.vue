@@ -145,6 +145,12 @@ export default {
               keys[i] === "price" || keys[i] === "stock" ? 0 : "";
           }
           this.file = "";
+        })
+        .catch(err => {
+          this.flashMessage.error({
+            title: "Error!!!!",
+            message: err.response.data.error
+          });
         });
     },
     onSelect() {
@@ -166,6 +172,12 @@ export default {
         })
         .then(res => {
           this.data.pictureUrl = res.data.image;
+        })
+        .catch(err => {
+          this.flashMessage.error({
+            title: "Error!!!!",
+            message: err.response.data.error
+          });
         });
     }
   },

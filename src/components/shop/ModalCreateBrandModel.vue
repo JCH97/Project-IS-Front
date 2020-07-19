@@ -56,6 +56,12 @@ export default {
           this.$emit("newBrandModels", this.name);
           this.name = "";
           this.value = [];
+        })
+        .catch(err => {
+          this.flashMessage.error({
+            title: "Error!!!!",
+            message: err.response.data.error
+          });
         });
     }
   }

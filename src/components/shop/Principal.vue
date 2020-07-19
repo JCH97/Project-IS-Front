@@ -213,6 +213,12 @@ export default {
         document
           .querySelector(`#${this.selectedBrandModel.brand}`)
           .classList.add("active");
+      })
+      .catch(err => {
+        this.flashMessage.error({
+          title: "Error!!!!",
+          message: err.response.data.error
+        });
       });
   },
   methods: {
@@ -251,7 +257,13 @@ export default {
             )
           }
         })
-        .then(data => (this.modelsOfBrand = data.data));
+        .then(data => (this.modelsOfBrand = data.data))
+        .catch(err => {
+          this.flashMessage.error({
+            title: "Error!!!!",
+            message: err.response.data.error
+          });
+        });
     },
     getNewPageToProduct() {
       const data = {
@@ -273,6 +285,12 @@ export default {
           this.numberOfPages = Math.ceil(
             parseFloat(data.data.count) / parseFloat(this.perPage)
           );
+        })
+        .catch(err => {
+          this.flashMessage.error({
+            title: "Error!!!!",
+            message: err.response.data.error
+          });
         });
     },
     changeNumberPage(newNumber) {
@@ -341,6 +359,12 @@ export default {
                     this.selectedBrandModel.model = "";
                     this.parts = [];
                   }
+                })
+                .catch(err => {
+                  this.flashMessage.error({
+                    title: "Error!!!!",
+                    message: err.response.data.error
+                  });
                 });
             } else {
               this.axios
@@ -360,6 +384,12 @@ export default {
                     if (this.modelsOfBrand.length === 0)
                       this.selectedBrandModel.brand = [];
                   }
+                })
+                .catch(err => {
+                  this.flashMessage.error({
+                    title: "Error!!!!",
+                    message: err.response.data.error
+                  });
                 });
             }
           }

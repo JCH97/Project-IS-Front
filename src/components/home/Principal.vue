@@ -1,5 +1,6 @@
 <template>
   <div>
+    <FlashMessage></FlashMessage>
     <div class="main-content-wrapper d-flex clearfix">
       <Menu />
       <!-- Product Catagories Area Start -->
@@ -13,7 +14,7 @@
           <div class="w3-row">
             <div class="w3-row-padding w3-padding" v-for="(item) in top" :key="item._id">
               <div class="w3-col m4 single-products-catagory clearfix w3-animate-left">
-                <router-link :to="{ name: 'ProductDetail', params: { obj: item.f } }">
+                <router-link :to="{ name: 'ProductDetail', params: { obj: item.f } }" v-if="item">
                   <img src="img/bg-img/1.jpg" alt />
                   <!-- Hover Content -->
                   <div class="hover-content">
@@ -24,7 +25,7 @@
                 </router-link>
               </div>
               <div class="w3-col m4 single-products-catagory clearfix w3-animate-zoom">
-                <router-link :to="{ name: 'ProductDetail', params: { obj: item.s } }">
+                <router-link :to="{ name: 'ProductDetail', params: { obj: item.s } }" v-if="item">
                   <img src="img/bg-img/1.jpg" alt />
                   <!-- Hover Content -->
                   <div class="hover-content">
@@ -35,7 +36,7 @@
                 </router-link>
               </div>
               <div class="w3-col m4 single-products-catagory clearfix w3-animate-right">
-                <router-link :to="{ name: 'ProductDetail', params: { obj: item.t } }">
+                <router-link :to="{ name: 'ProductDetail', params: { obj: item.t } }" v-if="item">
                   <img src="img/bg-img/1.jpg" alt />
                   <!-- Hover Content -->
                   <div class="hover-content">
@@ -77,6 +78,12 @@ export default {
       })
       .then(data => {
         this.top = data.data;
+      })
+      .catch(err => {
+        this.flashMessage.error({
+          title: "Error!!!!",
+          message: err.response.data.error
+        });
       });
   }
 };

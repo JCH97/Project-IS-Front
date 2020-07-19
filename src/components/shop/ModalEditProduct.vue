@@ -105,6 +105,12 @@ export default {
         })
         .then(res => {
           this.$emit("productEdited", res.data);
+        })
+        .catch(err => {
+          this.flashMessage.error({
+            title: "Error!!!!",
+            message: err.response.data.error
+          });
         });
     },
     onSelect() {
@@ -126,6 +132,12 @@ export default {
         })
         .then(res => {
           this.toEdit.pictureUrl = res.data.image;
+        })
+        .catch(err => {
+          this.flashMessage.error({
+            title: "Error!!!!",
+            message: err.response.data.error
+          });
         });
     }
   }
