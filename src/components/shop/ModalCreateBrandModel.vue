@@ -42,7 +42,7 @@ export default {
 
       this.axios
         .post(
-          "/api/car",
+          "/api/protected/car",
           { brand: this.name, models: this.value },
           {
             headers: {

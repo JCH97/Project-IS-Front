@@ -143,7 +143,7 @@ export default {
       };
 
       this.axios
-        .post("/api/sendMail", data, {
+        .post("/api/protected/sendMail", data, {
           headers: {
             "x-access-token": localStorage.getItem(
               "accessToken" || JSON.stringify("")

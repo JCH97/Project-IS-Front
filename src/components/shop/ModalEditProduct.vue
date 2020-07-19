@@ -96,7 +96,7 @@ export default {
     saveProduct() {
       this.$refs["modalEditProduct"].hide();
       this.axios
-        .put(`/api/part/${this.toEdit._id}`, this.toEdit, {
+        .put(`/api/protected/part/${this.toEdit._id}`, this.toEdit, {
           headers: {
             "x-access-token": localStorage.getItem(
               "accessToken" || JSON.stringify("")
@@ -123,7 +123,7 @@ export default {
       fromData.append("image", this.file);
 
       this.axios
-        .post("/api/part/uploadImage", fromData, {
+        .post("/api/protected/part/uploadImage", fromData, {
           headers: {
             "x-access-token": localStorage.getItem(
               "accessToken" || JSON.stringify()

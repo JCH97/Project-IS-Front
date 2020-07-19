@@ -127,9 +127,15 @@ export default {
       this.$refs["modalCreateProduct"].hide();
       this.data.car = this.idCar;
       if (!this.data.pictureUrl)
-        this.data.pictureUrl = join("uploads", "parts", "notFound.jpg");
+        this.data.pictureUrl = join(
+          __dirname,
+          "..",
+          "uploads",
+          "parts",
+          "notFound.jpg"
+        );
       this.axios
-        .post("/api/part", this.data, {
+        .post("/api/protected/part", this.data, {
           headers: {
             "x-access-token": localStorage.getItem(
               "accessToken" || JSON.stringify("")
@@ -163,7 +169,7 @@ export default {
       fromData.append("image", this.file);
 
       this.axios
-        .post("/api/part/uploadImage", fromData, {
+        .post("/api/protected/part/uploadImage", fromData, {
           headers: {
             "x-access-token": localStorage.getItem(
               "accessToken" || JSON.stringify()

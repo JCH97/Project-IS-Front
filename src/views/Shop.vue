@@ -20,9 +20,9 @@ export default {
     };
   },
   created() {
-    this.isAdmin = JSON.parse(
-      localStorage.getItem("user") || JSON.stringify("false")
-    ).isAdmin;
+    this.isAdmin =
+      JSON.parse(localStorage.getItem("user") || JSON.stringify({})).isAdmin ||
+      false;
   }
 };
 </script>

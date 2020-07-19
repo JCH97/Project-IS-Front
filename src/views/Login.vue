@@ -21,9 +21,11 @@
             </div>
 
             <div class="wrap-input100">
-              <span class="btn-show-pass">
-                <i class="zmdi zmdi-eye" @click="changeClassToShowPassword()"></i>
-              </span>
+              <router-link to>
+                <div class="btn-show-pass" style="z-index: 1" @click="changeClassToShowPassword()">
+                  <i class="zmdi zmdi-eye"></i>
+                </div>
+              </router-link>
               <input
                 class="input100"
                 type="password"

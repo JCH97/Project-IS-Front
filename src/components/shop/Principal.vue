@@ -25,6 +25,7 @@
                 v-b-modal.modalCreateBrandModel
                 v-b-tooltip.hover.right
                 title="Add new brand"
+                v-if="isAdmin"
               ></b-icon-plus>
             </router-link>
           </h6>
@@ -273,7 +274,7 @@ export default {
       };
 
       this.axios
-        .post("/api/part/perPage", data, {
+        .post("/api/protected/part/perPage", data, {
           headers: {
             "x-access-token": localStorage.getItem(
               "accessToken" || JSON.stringify("")
@@ -342,7 +343,7 @@ export default {
           if (value) {
             if (isBrand) {
               this.axios
-                .delete(`/api/car/brand/${val}`, {
+                .delete(`/api/protected/car/brand/${val}`, {
                   headers: {
                     "x-access-token": localStorage.getItem(
                       "accessToken" || JSON.stringify("")
@@ -368,7 +369,7 @@ export default {
                 });
             } else {
               this.axios
-                .delete(`/api/car/${this.modelsOfBrand[val]}`, {
+                .delete(`/api/protected/car/${this.modelsOfBrand[val]}`, {
                   headers: {
                     "x-access-token": localStorage.getItem(
                       "accessToken" || JSON.stringify("")
