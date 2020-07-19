@@ -67,9 +67,17 @@ export default {
     };
   },
   mounted() {
-    this.axios.get("/api/part/top/9").then(data => {
-      this.top = data.data;
-    });
+    this.axios
+      .get("/api/part/top/9", {
+        headers: {
+          "x-access-token": localStorage.getItem(
+            "accessToken" || JSON.stringify("")
+          )
+        }
+      })
+      .then(data => {
+        this.top = data.data;
+      });
   }
 };
 </script>

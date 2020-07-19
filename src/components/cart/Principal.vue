@@ -143,7 +143,13 @@ export default {
       };
 
       this.axios
-        .post("/api/sendMail", data)
+        .post("/api/sendMail", data, {
+          headers: {
+            "x-access-token": localStorage.getItem(
+              "accessToken" || JSON.stringify("")
+            )
+          }
+        })
         .then(() => {
           this.flashMessage.success({
             title: "Confirmacion de envio",

@@ -198,14 +198,22 @@ export default {
   },
   created() {
     //select brands' list
-    this.axios.get("/api/car/brands").then(data => {
-      this.brands = data.data;
+    this.axios
+      .get("/api/car/brands", {
+        headers: {
+          "x-access-token": localStorage.getItem(
+            "accessToken" || JSON.stringify("")
+          )
+        }
+      })
+      .then(data => {
+        this.brands = data.data;
 
-      this.selectedBrandModel.brand = this.brands[0];
-      document
-        .querySelector(`#${this.selectedBrandModel.brand}`)
-        .classList.add("active");
-    });
+        this.selectedBrandModel.brand = this.brands[0];
+        document
+          .querySelector(`#${this.selectedBrandModel.brand}`)
+          .classList.add("active");
+      });
   },
   methods: {
     changeClassInBrandList(brand) {
@@ -236,7 +244,13 @@ export default {
     },
     getModelTo(brand) {
       this.axios
-        .get(`/api/car/getModels/${brand}`)
+        .get(`/api/car/getModels/${brand}`, {
+          headers: {
+            "x-access-token": localStorage.getItem(
+              "accessToken" || JSON.stringify("")
+            )
+          }
+        })
         .then(data => (this.modelsOfBrand = data.data));
     },
     getNewPageToProduct() {
@@ -246,12 +260,20 @@ export default {
         page: this.page
       };
 
-      this.axios.post("/api/part/perPage", data).then(data => {
-        this.parts = data.data.parts;
-        this.numberOfPages = Math.ceil(
-          parseFloat(data.data.count) / parseFloat(this.perPage)
-        );
-      });
+      this.axios
+        .post("/api/part/perPage", data, {
+          headers: {
+            "x-access-token": localStorage.getItem(
+              "accessToken" || JSON.stringify("")
+            )
+          }
+        })
+        .then(data => {
+          this.parts = data.data.parts;
+          this.numberOfPages = Math.ceil(
+            parseFloat(data.data.count) / parseFloat(this.perPage)
+          );
+        });
     },
     changeNumberPage(newNumber) {
       this.page = newNumber;
@@ -301,20 +323,34 @@ export default {
         .then(value => {
           if (value) {
             if (isBrand) {
-              this.axios.delete(`/api/car/brand/${val}`).then(() => {
-                let indx = this.brands.findIndex(e => e === val);
-                this.brands.splice(indx, 1);
+              this.axios
+                .delete(`/api/car/brand/${val}`, {
+                  headers: {
+                    "x-access-token": localStorage.getItem(
+                      "accessToken" || JSON.stringify("")
+                    )
+                  }
+                })
+                .then(() => {
+                  let indx = this.brands.findIndex(e => e === val);
+                  this.brands.splice(indx, 1);
 
-                if (this.selectedBrandModel.brand === val) {
-                  this.modelsOfBrand = [];
-                  this.selectedBrandModel.brand = "";
-                  this.selectedBrandModel.model = "";
-                  this.parts = [];
-                }
-              });
+                  if (this.selectedBrandModel.brand === val) {
+                    this.modelsOfBrand = [];
+                    this.selectedBrandModel.brand = "";
+                    this.selectedBrandModel.model = "";
+                    this.parts = [];
+                  }
+                });
             } else {
               this.axios
-                .delete(`/api/car/${this.modelsOfBrand[val]}`)
+                .delete(`/api/car/${this.modelsOfBrand[val]}`, {
+                  headers: {
+                    "x-access-token": localStorage.getItem(
+                      "accessToken" || JSON.stringify("")
+                    )
+                  }
+                })
                 .then(() => {
                   delete this.modelsOfBrand[val];
 
