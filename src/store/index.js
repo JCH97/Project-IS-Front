@@ -33,7 +33,7 @@ export default new Vuex.Store({
       cart.forEach(e => { len += e.quantity });
 
       commit('setLength', len);
-    }
+    },
   },
   modules: {}
 });

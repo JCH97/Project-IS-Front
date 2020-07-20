@@ -1,5 +1,6 @@
 <template>
   <div>
+    <User />
     <!-- Mobile Nav (max width 767px)-->
     <div class="mobile-nav">
       <!-- Navbar Brand -->
@@ -44,6 +45,11 @@
                 <span class="w3-badge w3-orange">{{ this.lengthCart }}</span>
               </router-link>
             </li>
+            <li v-if="user.isAdmin" id="li-user">
+              <router-link to>
+                <div v-b-modal.modalTableUser>User</div>
+              </router-link>
+            </li>
           </div>
           <div class="mt-5">
             <li v-if="!user">
@@ -82,8 +88,12 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
+import User from "@/components/home/User.vue";
 export default {
   name: "Menu",
+  components: {
+    User
+  },
   data() {
     return {
       user: {}

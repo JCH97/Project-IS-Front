@@ -89,9 +89,9 @@
               <div class="single-product-wrapper">
                 <!-- Product Image -->
                 <div class="product-img">
-                  <img class="w3-animate-zoom" src="img/product-img/notFound.jpg" alt />
+                  <img class="w3-animate-zoom" :src="item.pictureUrl" alt />
                   <!-- Hover Thumb -->
-                  <img class="hover-img" src="img/product-img/notFound.jpg" alt />
+                  <img class="hover-img" :src="item.pictureUrl" alt />
                 </div>
 
                 <!-- Product Description -->
@@ -224,7 +224,6 @@ export default {
   },
   methods: {
     changeClassInBrandList(brand) {
-      console.log(`into change class brand list ${brand}`);
       //select the element with active clase for remove later
       let d = document.querySelector("li.active");
       if (d) d.classList.remove("active");
@@ -299,7 +298,6 @@ export default {
       this.getNewPageToProduct();
 
       let list = document.querySelectorAll("li.page-item");
-      console.log(list);
       for (let i = 0; i < list.length; i++)
         if (list[i].classList.contains("active")) {
           list[i].classList.remove("active");
@@ -310,7 +308,6 @@ export default {
     },
     sendToEdit(toEdit) {
       this.toEdit = toEdit;
-      console.log(`from shop ppal ${JSON.stringify(this.toEdit)}`);
     },
     fixEditedProduct(prod) {
       let indx = this.parts.findIndex(e => e._id === prod._id);
