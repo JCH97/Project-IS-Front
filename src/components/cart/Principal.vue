@@ -90,7 +90,7 @@
 <script>
 import Menu from "@/components/Menu.vue";
 import DeliveryToHome from "@/components/cart/DeliveryToHome.vue";
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 export default {
   name: "Principal",
   components: {
@@ -143,13 +143,7 @@ export default {
       };
 
       this.axios
-        .post("/api/protected/sendMail", data, {
-          headers: {
-            "x-access-token": localStorage.getItem(
-              "accessToken" || JSON.stringify("")
-            )
-          }
-        })
+        .post("/api/protected/sendMail", data, { headers: this.headers })
         .then(() => {
           this.flashMessage.success({
             title: "Confirmacion de envio",
@@ -165,7 +159,7 @@ export default {
           });
         });
     },
-    ...mapActions(["setLength"])
+    ...mapActions(["setLength", "headers"])
   }
 };
 </script>

@@ -27,7 +27,10 @@
     </b-modal>
   </div>
 </template>
+
+
 <script>
+import { mapState } from "vuex";
 export default {
   name: "ModalCreateBrand-Model",
   data() {
@@ -44,13 +47,7 @@ export default {
         .post(
           "/api/protected/car",
           { brand: this.name, models: this.value },
-          {
-            headers: {
-              "x-access-token": localStorage.getItem(
-                "accessToken" || JSON.stringify("")
-              )
-            }
-          }
+          { headers: this.headers }
         )
         .then(() => {
           this.$emit("newBrandModels", this.name);
@@ -64,6 +61,9 @@ export default {
           });
         });
     }
+  },
+  computed: {
+    ...mapState(["headers"])
   }
 };
 </script>

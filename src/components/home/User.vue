@@ -53,6 +53,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   name: "User",
   data() {
@@ -104,13 +105,7 @@ export default {
   methods: {
     getData() {
       this.axios
-        .get("/api/protected/user", {
-          headers: {
-            "x-access-token": localStorage.getItem(
-              "accessToken" || JSON.stringify("")
-            )
-          }
-        })
+        .get("/api/protected/user", { headers: this.headers })
         .then(res => {
           this.items = res.data;
         });
@@ -121,15 +116,12 @@ export default {
       this.axios.put(
         `/api/protected/user/${data._id}`,
         { isAdmin: data.isAdmin, discount: data.discount },
-        {
-          headers: {
-            "x-access-token": localStorage.getItem(
-              "accessToken" || JSON.stringify("")
-            )
-          }
-        }
+        { headers: this.headers }
       );
     }
+  },
+  computed: {
+    ...mapState(["headers"])
   }
 };
 </script>

@@ -56,6 +56,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import Menu from "@/components/Menu.vue";
 export default {
   name: "Principal",
@@ -69,13 +70,7 @@ export default {
   },
   mounted() {
     this.axios
-      .get("/api/part/top/9", {
-        headers: {
-          "x-access-token": localStorage.getItem(
-            "accessToken" || JSON.stringify("")
-          )
-        }
-      })
+      .get("/api/part/top/9", { headers: this.headers })
       .then(data => {
         this.top = data.data;
       })
@@ -85,6 +80,9 @@ export default {
           message: err.response.data.error
         });
       });
+  },
+  computed: {
+    ...mapState(["headers"])
   }
 };
 </script>
