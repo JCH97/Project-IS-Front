@@ -6,7 +6,6 @@ import Shop from "../views/Shop.vue"
 import Login from "../views/Login.vue";
 import ProductDetail from "../views/ProductDetail.vue";
 import Cart from "../views/Cart.vue";
-import Testing from "../views/Testing.vue";
 
 Vue.use(VueRouter);
 
@@ -37,11 +36,6 @@ const routes = [
     name: "Cart",
     component: Cart
   },
-  {
-    path: "/testing",
-    name: "Testing",
-    component: Testing
-  }
 ];
 
 const router = new VueRouter({

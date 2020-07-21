@@ -1,0 +1,144 @@
+<template>
+  <div>
+    <UploadImage @saveImage="saveImage" />
+    <b-modal id="modalBase" ref="modalBase" :title="params.title" ok-only hide-footer>
+      <b-form-group v-if="params.data.length > 0">
+        <b-form-text id="name-help">Ingrese el nombre del producto.</b-form-text>
+        <b-form-input
+          class="mb-4"
+          name="name"
+          id="name"
+          placeholder="Nombre"
+          aria-describedby="name-help name-invalid"
+          :state="params.data.name.length > 2"
+          v-model="params.data.name"
+        ></b-form-input>
+
+        <b-form-text id="serialNumber-help">Ingrese el numero de serie del producto</b-form-text>
+        <b-form-input
+          class="mb-4"
+          name="serialNumber"
+          id="serialNumber"
+          aria-describedby="serialNumber-help"
+          placeholder="Numero de serie"
+          v-model="params.data.serialNumber"
+        ></b-form-input>
+
+        <b-form-text id="price-help">Ingrese el precio del producto</b-form-text>
+        <b-form-input
+          type="number"
+          class="mb-4"
+          name="price"
+          id="price"
+          aria-describedby="price-help"
+          :state="params.data.price > 0"
+          v-model="params.data.price"
+        ></b-form-input>
+
+        <b-form-text id="dim-help">Ingrese las dimensiones del producto</b-form-text>
+        <b-form-input
+          type="text"
+          class="mb-4"
+          name="dim"
+          id="dim"
+          aria-describedby="dim-help"
+          v-model="params.data.dim"
+        ></b-form-input>
+
+        <b-form-text id="stocks-help">Ingrese el stock del producto</b-form-text>
+        <b-form-input
+          type="number"
+          class="mb-4"
+          name="stock"
+          id="stock"
+          aria-describedby="stock-help"
+          :state="params.data.stock > 0"
+          v-model="params.data.stock"
+        ></b-form-input>
+
+        <b-form-text id="description-help">Ingrese la descripcion del producto</b-form-text>
+        <b-form-textarea
+          class="mb-4"
+          name="description"
+          id="description"
+          v-model="params.data.description"
+          aria-describedby="description-help"
+          no-resize
+        ></b-form-textarea>
+
+        <b-button
+          class="mb-4"
+          variant="outline-warning"
+          v-b-modal.modalAddPhoto
+          block
+          size="sm"
+        >Agregar foto</b-button>
+
+        <b-button
+          variant="outline-success"
+          block
+          @click="saveProduct()"
+        >{{ this.params.textButton }}</b-button>
+      </b-form-group>
+    </b-modal>
+  </div>
+</template>
+
+<script>
+import UploadImage from "@/components/shop/UploadImage.vue";
+import { mapState } from "vuex";
+export default {
+  name: "ModalBase",
+  components: {
+    UploadImage
+  },
+  props: {
+    params: Object //{ title, textButton, url, isCreate, data, car }
+  },
+  methods: {
+    ok(ans) {
+      this.$emit("partsChange", ans);
+    },
+    fail(msj) {
+      this.flashMessage.error({
+        title: "Error!!!!",
+        message: msj
+      });
+    },
+    pre() {
+      this.$refs["modalBase"].hide();
+    },
+    saveProduct() {
+      this.pre();
+      if (this.params.isCreate)
+        this.axios
+          .post(this.params.url, this.params.data, { headers: this.headers })
+          .then(res => {
+            this.ok(res.data);
+          })
+          .catch(err => {
+            this.fail(
+              err.response.data.error || "Error al guardar, intente nuevamente"
+            );
+          });
+      else
+        this.axios
+          .put(this.params.url, this.params.data, { headers: this.headers })
+          .then(data => {
+            this.ok(data.data);
+          })
+          .catch(err =>
+            this.fail(
+              err.response.data.error || "Error al editar, intente nuevamente"
+            )
+          );
+    },
+    saveImage(val) {
+      this.params.data.pictureUrl = val;
+    }
+  },
+  computed: {
+    ...mapState(["headers"])
+  }
+};
+</script>

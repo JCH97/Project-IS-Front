@@ -1,15 +1,7 @@
 <template>
   <div>
     <FlashMessage></FlashMessage>
-    <ModalCreateProduct
-      @addNewProduct="addProductToList"
-      :idCar="modelsOfBrand[selectedBrandModel.model]"
-    />
-    <ModalEditProduct
-      @productEdited="fixEditedProduct"
-      :idCar="modelsOfBrand[selectedBrandModel.model]"
-      :toEdit="toEdit"
-    />
+    <ModalBase :params="paramsModal" @partsChange="partsChange" />
     <ModalCreateBrandModel @newBrandModels="addNewBrandModels" />
     <div class="main-content-wrapper d-flex clearfix">
       <Menu />
@@ -18,7 +10,7 @@
         <div class="widget catagory mb-50">
           <!-- Widget Title -->
           <h6 class="widget-title mb-30">
-            Brands' list:
+            Marcas
             <router-link to>
               <b-icon-plus
                 class="h1 mb-2"
@@ -42,16 +34,22 @@
             </ul>
           </div>
           <hr />
-          <h6 class="widget-title mb-30">Models' list:</h6>
-          <div class="catagories-menu">
-            <ol>
-              <li v-for="item in Object.keys(modelsOfBrand)" :key="item" :id="`m${item}`">
-                <b-icon-trash v-if="isAdmin" variant="danger" @click="confirmToDelete(item, false)"></b-icon-trash>
-                <span @click="changeClassInModelList(item)">
-                  <router-link to>{{ item }}</router-link>
-                </span>
-              </li>
-            </ol>
+          <div v-if="this.selectedBrandModel.brand">
+            <h6 class="widget-title mb-30">Listado de modelos:</h6>
+            <div class="catagories-menu">
+              <ol>
+                <li v-for="item in Object.keys(modelsOfBrand)" :key="item" :id="`m${item}`">
+                  <b-icon-trash
+                    v-if="isAdmin"
+                    variant="danger"
+                    @click="confirmToDelete(item, false)"
+                  ></b-icon-trash>
+                  <span @click="changeClassInModelList(item)">
+                    <router-link to>{{ item }}</router-link>
+                  </span>
+                </li>
+              </ol>
+            </div>
           </div>
         </div>
       </div>
@@ -64,13 +62,13 @@
                 <!-- Total Products -->
                 <div class="total-products">
                   <p class="h1">
-                    Showing {{ this.perPage * (this.page - 1) + 1 }} - {{ this.page * this.perPage }} 0f {{ this.numberOfPages }} [ {{ this.selectedBrandModel.brand }} / {{ this.selectedBrandModel.model }} ]
+                    Mostrando {{ this.perPage * (this.page - 1) + 1 }} - {{ this.page * this.perPage }} de {{ this.numberOfPages }} páginas [ {{ this.selectedBrandModel.brand }} / {{ this.selectedBrandModel.model }} ]
                     <router-link
                       to
                       v-if="isAdmin && selectedBrandModel.brand && selectedBrandModel.model"
                     >
                       <b-icon-gear-wide-connected
-                        v-b-modal.modalCreateProduct
+                        @click="addNewProduct"
                         v-b-tooltip.hover.right
                         title="Add new product"
                         class="h5 mb-1"
@@ -107,17 +105,14 @@
                   <!-- Ratings & Cart -->
                   <div class="ratings-cart text-right">
                     <div class="ratings">
-                      <i class="fa fa-star" aria-hidden="true"></i>
-                      <i class="fa fa-star" aria-hidden="true"></i>
-                      <i class="fa fa-star" aria-hidden="true"></i>
-                      <i class="fa fa-star" aria-hidden="true"></i>
-                      <i class="fa fa-star" aria-hidden="true"></i>
+                      <b-form-rating variant="warning" size="sm" inline show clear></b-form-rating>
                     </div>
                     <div class="cart">
                       <router-link to v-b-tooltip.hover.left title="Add to cart">
                         <img
                           src="img/core-img/cart.png"
                           @click="addToCart({product: item, quantity:1})"
+                          alt="Problemas al cargar la imagen"
                         />
                       </router-link>
                     </div>
@@ -126,8 +121,7 @@
                       v-if="isAdmin && selectedBrandModel.brand && selectedBrandModel.model"
                     >
                       <b-icon-pencil
-                        @click="sendToEdit(item)"
-                        v-b-modal.modalEditProduct
+                        @click="editProduct(item)"
                         v-b-tooltip.hover.right
                         class="h5"
                         title="Edit product"
@@ -167,16 +161,15 @@
 
 <script>
 import Menu from "@/components/Menu.vue";
-import ModalCreateProduct from "@/components/shop/ModalCreateProduct.vue";
-import ModalEditProduct from "@/components/shop/ModalEditProduct.vue";
 import ModalCreateBrandModel from "@/components/shop/ModalCreateBrandModel.vue";
-import { mapActions } from "vuex";
+import ModalBase from "@/components/shop/ModalBase.vue";
+import { mapActions, mapState } from "vuex";
+import { join } from "path";
 export default {
   name: "Principal",
   components: {
     Menu,
-    ModalCreateProduct,
-    ModalEditProduct,
+    ModalBase,
     ModalCreateBrandModel
   },
   props: {
@@ -194,31 +187,28 @@ export default {
       page: 1,
       perPage: 6,
       numberOfPages: 0,
-      toEdit: {}
+      paramsModal: {
+        title: "",
+        textButton: "",
+        url: "",
+        isCreate: true,
+        data: {}
+      }
     };
   },
   created() {
     //select brands' list
     this.axios
-      .get("/api/car/brands", {
-        headers: {
-          "x-access-token": localStorage.getItem(
-            "accessToken" || JSON.stringify("")
-          )
-        }
-      })
+      .get("/api/car/brands", { headers: this.headers })
       .then(data => {
         this.brands = data.data;
-
-        this.selectedBrandModel.brand = this.brands[0];
-        document
-          .querySelector(`#${this.selectedBrandModel.brand}`)
-          .classList.add("active");
       })
       .catch(err => {
         this.flashMessage.error({
           title: "Error!!!!",
-          message: err.response.data.error
+          message:
+            err.response.data.error ||
+            "Error al cargar las marcas de los autos, actualice el sitio"
         });
       });
   },
@@ -250,18 +240,14 @@ export default {
     },
     getModelTo(brand) {
       this.axios
-        .get(`/api/car/getModels/${brand}`, {
-          headers: {
-            "x-access-token": localStorage.getItem(
-              "accessToken" || JSON.stringify("")
-            )
-          }
-        })
+        .get(`/api/car/getModels/${brand}`, { headers: this.headers })
         .then(data => (this.modelsOfBrand = data.data))
         .catch(err => {
           this.flashMessage.error({
             title: "Error!!!!",
-            message: err.response.data.error
+            message:
+              err.response.data.error ||
+              "No se pudieron obtener los modelos, actualice el sitio"
           });
         });
     },
@@ -273,13 +259,7 @@ export default {
       };
 
       this.axios
-        .post("/api/protected/part/perPage", data, {
-          headers: {
-            "x-access-token": localStorage.getItem(
-              "accessToken" || JSON.stringify("")
-            )
-          }
-        })
+        .post("/api/protected/part/perPage", data, { headers: this.headers })
         .then(data => {
           this.parts = data.data.parts;
           this.numberOfPages = Math.ceil(
@@ -289,7 +269,9 @@ export default {
         .catch(err => {
           this.flashMessage.error({
             title: "Error!!!!",
-            message: err.response.data.error
+            message:
+              err.response.data.error ||
+              "No se pudo obtener la nueva página de productos, actualice el sitio"
           });
         });
     },
@@ -306,19 +288,9 @@ export default {
 
       document.querySelector(`#n${newNumber}`).classList.add("active");
     },
-    sendToEdit(toEdit) {
-      this.toEdit = toEdit;
-    },
-    fixEditedProduct(prod) {
-      let indx = this.parts.findIndex(e => e._id === prod._id);
-      if (indx > -1) this.parts[indx] = prod;
-    },
     addNewBrandModels(brand) {
       if (this.brands.findIndex(e => e === brand) === -1)
         this.brands.push(brand);
-    },
-    addProductToList(prod) {
-      this.parts.push(prod);
     },
     confirmToDelete(val, isBrand) {
       this.$bvModal
@@ -341,11 +313,7 @@ export default {
             if (isBrand) {
               this.axios
                 .delete(`/api/protected/car/brand/${val}`, {
-                  headers: {
-                    "x-access-token": localStorage.getItem(
-                      "accessToken" || JSON.stringify("")
-                    )
-                  }
+                  headers: this.headers
                 })
                 .then(() => {
                   let indx = this.brands.findIndex(e => e === val);
@@ -361,17 +329,14 @@ export default {
                 .catch(err => {
                   this.flashMessage.error({
                     title: "Error!!!!",
-                    message: err.response.data.error
+                    message:
+                      err.response.data.error || "Error al eliminar la marca"
                   });
                 });
             } else {
               this.axios
                 .delete(`/api/protected/car/${this.modelsOfBrand[val]}`, {
-                  headers: {
-                    "x-access-token": localStorage.getItem(
-                      "accessToken" || JSON.stringify("")
-                    )
-                  }
+                  headers: this.headers
                 })
                 .then(() => {
                   delete this.modelsOfBrand[val];
@@ -386,7 +351,8 @@ export default {
                 .catch(err => {
                   this.flashMessage.error({
                     title: "Error!!!!",
-                    message: err.response.data.error
+                    message:
+                      err.response.data.error || "Error al eliminar el modelo"
                   });
                 });
             }
@@ -399,7 +365,44 @@ export default {
           });
         });
     },
+    addNewProduct() {
+      console.log("into add new product");
+      this.paramsModal.title = "Agregar nuevo producto";
+      this.paramsModal.textButton = "Guardar";
+      this.paramsModal.url = "/api/protected/part";
+      this.paramsModal.isCreate = true;
+      this.paramsModal.data = {
+        name: "Gomas",
+        serialNumber: "",
+        dim: "",
+        description: "",
+        price: 123,
+        stock: 123,
+        pictureUrl: join(__dirname, "..", "uploads", "parts", "notFound.jpg"),
+        car: this.modelsOfBrand[this.selectedBrandModel.model]
+      };
+
+      this.$bvModal.show("modalBase");
+    },
+    editProduct(data) {
+      this.paramsModal.title = "Editar producto";
+      this.paramsModal.textButton = "Editar";
+      this.paramsModal.url = `/api/protected/part/${data._id}`;
+      this.paramsModal.isCreate = false;
+      this.paramsModal.data = data;
+
+      this.$bvModal.show("modalBase");
+    },
+    partsChange(part) {
+      //val => Object con todo lo de la pieza que se agrega
+      let indx = this.parts.findIndex(e => e._id === part._id);
+      if (indx > -1) this.parts[indx] = part;
+      if (this.parts.length < this.perPage) this.parts.push(part);
+    },
     ...mapActions(["addToCart"])
+  },
+  computed: {
+    ...mapState(["headers"])
   }
 };
 </script>

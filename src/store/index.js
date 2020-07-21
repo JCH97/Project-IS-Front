@@ -5,11 +5,13 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    lengthCart: 0 // [{ product1, quantity1 }, { prodcut2, quantity2 }, ... 
+    lengthCart: 0, // [{ product1, quantity1 }, { prodcut2, quantity2 }, ... 
+    headers: {
+      "x-access-token": localStorage.getItem("accessToken" || JSON.stringify(""))
+    }
   },
   mutations: {
     setLength(state, len) {
-      console.log(`from vuex length Cart ${len}`)
       state.lengthCart = len;
     }
   },
@@ -28,7 +30,7 @@ export default new Vuex.Store({
       dispatch('setLength');
     },
     setLength: function ({ commit }) {
-      let cart = Array.from(JSON.parse(localStorage.getItem('cartUserLog')));
+      let cart = Array.from(JSON.parse(localStorage.getItem('cartUserLog') || JSON.stringify([])));
       let len = 0;
       cart.forEach(e => { len += e.quantity });
 
