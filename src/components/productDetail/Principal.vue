@@ -63,7 +63,7 @@
                   <!-- Avaiable -->
                   <p class="avaibility">
                     <i class="fa fa-circle" :style="{ color: changeColorToStock }"></i>
-                    En almacen( {{ this.product.stock }} )
+                    In Stock( {{ this.product.stock }} )
                   </p>
                 </div>
 
@@ -96,7 +96,10 @@
                   </div>
                   <b-button
                     class="btn amado-btn"
-                    variant="outline-warning"
+                    v-b-tooltip.hover.left
+                    :title="product.stock === 0 ? 'Stock empty, contact with admin' : 'Add to cart'"
+                    :variant="product.stock === 0 ? 'outline-danger': 'outline-warning'"
+                    :disabled="product.stock === 0"
                     @click="addToCart({product, quantity})"
                   >
                     <h4>Add to Cart</h4>

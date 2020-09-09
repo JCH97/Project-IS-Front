@@ -1,6 +1,6 @@
 <template>
   <div>
-    <FlashMessage></FlashMessage>
+    <FlashMessage :position="'right top'"></FlashMessage>
     <div class="main-content-wrapper d-flex clearfix">
       <Menu />
       <div class="cart-table-area section-padding-100">
@@ -139,7 +139,8 @@ export default {
     sendMail() {
       let data = {
         subject: "Solicitud de compra por internet",
-        text: ""
+        text: JSON.stringify(data),
+        cart: this.cartUserLog
       };
 
       this.axios
@@ -153,13 +154,19 @@ export default {
           this.$router.push("/");
         })
         .catch(err => {
+          if (err.response.data.statusCode === 401)
+            this.$router.push("/authenticate");
+
           this.flashMessage.error({
             title: "Error!!!!",
             message: err.response.data.error
           });
         });
     },
-    ...mapActions(["setLength", "headers"])
+    ...mapActions(["setLength"])
+  },
+  computed: {
+    ...mapState(["headers"])
   }
 };
 </script>

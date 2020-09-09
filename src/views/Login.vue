@@ -144,8 +144,8 @@ export default {
         .post("/register", { data: this.data })
         .then(res => {
           this.flashMessage.success({
-            title: "Confirmacion de registro",
-            message: `${res.data.userName} ha realizado su registro correctamente`
+            title: "Confirm register",
+            message: `${res.data.userName} register successfully`
           });
           this.login = true;
         })

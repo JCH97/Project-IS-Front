@@ -38,13 +38,16 @@ export default {
       fromData.append("image", this.file);
 
       this.axios
-        .post("/api/protected/part/uploadImage", fromData, {
+        .post("/api/protected/admin/part/uploadImage", fromData, {
           headers: this.headers
         })
         .then(res => {
           this.$emit("saveImage", res.data.image);
         })
         .catch(err => {
+          if (err.response.data.statusCode === 401)
+            this.$router.push("/authenticate");
+
           this.flashMessage.error({
             title: "Error!!!!",
             message: err.response.data.error

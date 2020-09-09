@@ -1,6 +1,6 @@
 <template>
   <div>
-    <FlashMessage></FlashMessage>
+    <FlashMessage :position="'right top'"></FlashMessage>
     <ModalBase :params="paramsModal" @partsChange="partsChange" />
     <ModalCreateBrandModel @newBrandModels="addNewBrandModels" />
     <div class="main-content-wrapper d-flex clearfix">
@@ -108,10 +108,17 @@
                       <b-form-rating variant="warning" size="sm" inline show clear></b-form-rating>
                     </div>
                     <div class="cart">
-                      <router-link to v-b-tooltip.hover.left title="Add to cart">
+                      <router-link
+                        to
+                        v-b-tooltip.hover.left
+                        t
+                        :title="item.stock === 0 ? 'Stock empty, contact with admin' : 'Add to cart'"
+                      >
                         <img
                           src="img/core-img/cart.png"
                           @click="addToCart({product: item, quantity:1})"
+                          :disabled="item.stock === 0"
+                          :variant="item.stock === 0 ? 'outline-danger': ''"
                           alt="Problemas al cargar la imagen"
                         />
                       </router-link>
@@ -192,7 +199,7 @@ export default {
         textButton: "",
         url: "",
         isCreate: true,
-        data: {}
+        data: undefined
       }
     };
   },
@@ -208,7 +215,7 @@ export default {
           title: "Error!!!!",
           message:
             err.response.data.error ||
-            "Error al cargar las marcas de los autos, actualice el sitio"
+            "Error to get data from the server, refresh page plase"
         });
       });
   },
@@ -226,6 +233,7 @@ export default {
       //get models of selected brand
       this.getModelTo(brand);
     },
+
     changeClassInModelList(model) {
       //select element of models' list with active class for remove later
       let d = document.querySelector("ol > li.active");
@@ -238,6 +246,7 @@ export default {
       //get products to paginate
       this.getNewPageToProduct();
     },
+
     getModelTo(brand) {
       this.axios
         .get(`/api/car/getModels/${brand}`, { headers: this.headers })
@@ -247,10 +256,11 @@ export default {
             title: "Error!!!!",
             message:
               err.response.data.error ||
-              "No se pudieron obtener los modelos, actualice el sitio"
+              "Error to get data from the server, refresh page plase"
           });
         });
     },
+
     getNewPageToProduct() {
       const data = {
         id: this.modelsOfBrand[this.selectedBrandModel.model],
@@ -259,7 +269,7 @@ export default {
       };
 
       this.axios
-        .post("/api/protected/part/perPage", data, { headers: this.headers })
+        .post("/api/part/perPage", data, { headers: this.headers })
         .then(data => {
           this.parts = data.data.parts;
           this.numberOfPages = Math.ceil(
@@ -271,10 +281,11 @@ export default {
             title: "Error!!!!",
             message:
               err.response.data.error ||
-              "No se pudo obtener la nueva página de productos, actualice el sitio"
+              "Error to get data from the server, refresh page plase"
           });
         });
     },
+
     changeNumberPage(newNumber) {
       this.page = newNumber;
       this.getNewPageToProduct();
@@ -288,14 +299,16 @@ export default {
 
       document.querySelector(`#n${newNumber}`).classList.add("active");
     },
+
     addNewBrandModels(brand) {
       if (this.brands.findIndex(e => e === brand) === -1)
         this.brands.push(brand);
     },
+
     confirmToDelete(val, isBrand) {
       this.$bvModal
         .msgBoxConfirm(
-          "Esta seguro de la eliminacion? Se borraran todas las piezas de carros dentro de la marca o modelo a eliminar.",
+          "Está seguro de la eliminación? Se borrarán todas las piezas de carros dentro de la marca o modelo a eliminar.",
           {
             title: "Por favor, confirmar",
             size: "sm",
@@ -312,7 +325,7 @@ export default {
           if (value) {
             if (isBrand) {
               this.axios
-                .delete(`/api/protected/car/brand/${val}`, {
+                .delete(`/api/protected/admin/car/brand/${val}`, {
                   headers: this.headers
                 })
                 .then(() => {
@@ -327,15 +340,17 @@ export default {
                   }
                 })
                 .catch(err => {
+                  if (err.response.data.statusCode === 401)
+                    this.$router.push("/authenticate");
+
                   this.flashMessage.error({
                     title: "Error!!!!",
-                    message:
-                      err.response.data.error || "Error al eliminar la marca"
+                    message: err.response.data.error || "Error to remove brand"
                   });
                 });
             } else {
               this.axios
-                .delete(`/api/protected/car/${this.modelsOfBrand[val]}`, {
+                .delete(`/api/protected/admin/car/${this.modelsOfBrand[val]}`, {
                   headers: this.headers
                 })
                 .then(() => {
@@ -349,10 +364,11 @@ export default {
                   }
                 })
                 .catch(err => {
+                  if (err.response.data.statusCode === 401)
+                    this.$router.push("/authenticate");
                   this.flashMessage.error({
                     title: "Error!!!!",
-                    message:
-                      err.response.data.error || "Error al eliminar el modelo"
+                    message: err.response.data.error || "Error to remove model"
                   });
                 });
             }
@@ -365,11 +381,11 @@ export default {
           });
         });
     },
+
     addNewProduct() {
-      console.log("into add new product");
       this.paramsModal.title = "Agregar nuevo producto";
       this.paramsModal.textButton = "Guardar";
-      this.paramsModal.url = "/api/protected/part";
+      this.paramsModal.url = "/api/protected/admin/part";
       this.paramsModal.isCreate = true;
       this.paramsModal.data = {
         name: "Gomas",
@@ -384,21 +400,24 @@ export default {
 
       this.$bvModal.show("modalBase");
     },
+
     editProduct(data) {
       this.paramsModal.title = "Editar producto";
       this.paramsModal.textButton = "Editar";
-      this.paramsModal.url = `/api/protected/part/${data._id}`;
+      this.paramsModal.url = `/api/protected/admin/part/${data._id}`;
       this.paramsModal.isCreate = false;
       this.paramsModal.data = data;
 
       this.$bvModal.show("modalBase");
     },
+
     partsChange(part) {
       //val => Object con todo lo de la pieza que se agrega
       let indx = this.parts.findIndex(e => e._id === part._id);
       if (indx > -1) this.parts[indx] = part;
       if (this.parts.length < this.perPage) this.parts.push(part);
     },
+
     ...mapActions(["addToCart"])
   },
   computed: {

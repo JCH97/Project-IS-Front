@@ -14,7 +14,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 Vue.config.productionTip = false;
 Vue.use(vueAxios, axios)
-Vue.use(flashMessage);
+Vue.use(flashMessage, { strategy: 'multiple' });
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
 

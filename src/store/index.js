@@ -7,7 +7,7 @@ export default new Vuex.Store({
   state: {
     lengthCart: 0, // [{ product1, quantity1 }, { prodcut2, quantity2 }, ... 
     headers: {
-      "x-access-token": localStorage.getItem("accessToken" || JSON.stringify(""))
+      "x-access-token": localStorage.getItem("accessToken") || JSON.stringify("")
     }
   },
   mutations: {
@@ -17,6 +17,8 @@ export default new Vuex.Store({
   },
   actions: {
     addToCart: function ({ dispatch }, data) { //data = { product: Object, quantity: number }
+      if (data.product.stock === 0) return;
+
       let cart = Array.from(JSON.parse(localStorage.getItem('cartUserLog') || JSON.stringify([])));
 
       let obj = cart.find(e => e.product._id === data.product._id);

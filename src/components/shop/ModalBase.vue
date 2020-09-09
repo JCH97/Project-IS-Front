@@ -2,7 +2,7 @@
   <div>
     <UploadImage @saveImage="saveImage" />
     <b-modal id="modalBase" ref="modalBase" :title="params.title" ok-only hide-footer>
-      <b-form-group v-if="params.data.length > 0">
+      <b-form-group v-if="params.data">
         <b-form-text id="name-help">Ingrese el nombre del producto.</b-form-text>
         <b-form-input
           class="mb-4"
@@ -117,9 +117,9 @@ export default {
             this.ok(res.data);
           })
           .catch(err => {
-            this.fail(
-              err.response.data.error || "Error al guardar, intente nuevamente"
-            );
+            if (err.response.data.statusCode === 401)
+              this.$router.push("/authenticate");
+            this.fail(err.response.data.error || "Error to save");
           });
       else
         this.axios
@@ -127,11 +127,11 @@ export default {
           .then(data => {
             this.ok(data.data);
           })
-          .catch(err =>
-            this.fail(
-              err.response.data.error || "Error al editar, intente nuevamente"
-            )
-          );
+          .catch(err => {
+            if (err.response.data.statusCode === 401)
+              this.$router.push("/authenticate");
+            this.fail(err.response.data.error || "Error to save");
+          });
     },
     saveImage(val) {
       this.params.data.pictureUrl = val;

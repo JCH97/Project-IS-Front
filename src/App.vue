@@ -18,6 +18,7 @@ export default {
       })
       .catch(() => {
         localStorage.clear();
+        this.$router.push("/authenticate");
       });
   }
 };
