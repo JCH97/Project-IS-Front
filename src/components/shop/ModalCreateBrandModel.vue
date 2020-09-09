@@ -45,7 +45,7 @@ export default {
 
       this.axios
         .post(
-          "/api/protected/car",
+          "/api/protected/admin/car",
           { brand: this.name, models: this.value },
           { headers: this.headers }
         )
@@ -55,6 +55,9 @@ export default {
           this.value = [];
         })
         .catch(err => {
+          if (err.response.data.statusCode === 401)
+            this.$router.push("/authenticate");
+
           this.flashMessage.error({
             title: "Error!!!!",
             message: err.response.data.error
