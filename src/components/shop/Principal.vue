@@ -388,12 +388,12 @@ export default {
       this.paramsModal.url = "/api/protected/admin/part";
       this.paramsModal.isCreate = true;
       this.paramsModal.data = {
-        name: "Gomas",
+        name: "",
         serialNumber: "",
         dim: "",
         description: "",
-        price: 123,
-        stock: 123,
+        price: 0,
+        stock: 0,
         pictureUrl: join(__dirname, "..", "uploads", "parts", "notFound.jpg"),
         car: this.modelsOfBrand[this.selectedBrandModel.model]
       };
