@@ -43,6 +43,11 @@ export default {
         })
         .then(res => {
           this.$emit("saveImage", res.data.image);
+
+          this.flashMessage.success({
+            title: "Image",
+            message: "Image save successfully!!!"
+          });
         })
         .catch(err => {
           if (err.response.data.statusCode === 401)

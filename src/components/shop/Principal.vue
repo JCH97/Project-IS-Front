@@ -119,7 +119,7 @@
                           @click="addToCart({product: item, quantity:1})"
                           :disabled="item.stock === 0"
                           :variant="item.stock === 0 ? 'outline-danger': ''"
-                          alt="Problemas al cargar la imagen"
+                          alt="Image"
                         />
                       </router-link>
                     </div>
@@ -129,11 +129,18 @@
                     >
                       <b-icon-pencil
                         @click="editProduct(item)"
-                        v-b-tooltip.hover.right
+                        v-b-tooltip.hover.left
                         class="h5"
                         title="Edit product"
                         variant="success"
                       ></b-icon-pencil>
+                      <b-icon-trash
+                        @click="removeProduct(item._id)"
+                        v-b-tooltip.hover.right
+                        class="h5"
+                        title="Remove product"
+                        variant="danger"
+                      ></b-icon-trash>
                     </router-link>
                   </div>
                 </div>
@@ -409,6 +416,26 @@ export default {
       this.paramsModal.data = data;
 
       this.$bvModal.show("modalBase");
+    },
+
+    removeProduct(id) {
+      this.axios
+        .delete(`/api/protected/admin/part/${id}`, { headers: this.headers })
+        .then(data => {
+          let indx = this.parts.indexOf(p => p._id === id);
+          this.parts.splice(indx, 1);
+
+          this.flashMessage.success({
+            title: "Product removed",
+            message: `${data.data.name} removed successfully!!`
+          });
+        })
+        .catch(err => {
+          this.flashMessage.error({
+            title: "Error!!!!",
+            message: err.response.data.error || "Not removed product"
+          });
+        });
     },
 
     partsChange(part) {

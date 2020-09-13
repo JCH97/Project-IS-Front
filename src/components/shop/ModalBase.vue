@@ -115,6 +115,11 @@ export default {
           .post(this.params.url, this.params.data, { headers: this.headers })
           .then(res => {
             this.ok(res.data);
+
+            this.flashMessage.success({
+              title: "Product added",
+              message: `${this.params.data.name} added successfully!!`
+            });
           })
           .catch(err => {
             if (err.response.data.statusCode === 401)
@@ -126,6 +131,11 @@ export default {
           .put(this.params.url, this.params.data, { headers: this.headers })
           .then(data => {
             this.ok(data.data);
+
+            this.flashMessage.success({
+              title: "Product edited",
+              message: `${this.params.data.name} edited successfully!!`
+            });
           })
           .catch(err => {
             if (err.response.data.statusCode === 401)

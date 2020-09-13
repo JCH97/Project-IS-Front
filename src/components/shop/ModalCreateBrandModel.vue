@@ -53,6 +53,11 @@ export default {
           this.$emit("newBrandModels", this.name);
           this.name = "";
           this.value = [];
+
+          this.flashMessage.success({
+            title: "Brand/Model added",
+            message: "Brands and models added successfully!!!"
+          });
         })
         .catch(err => {
           if (err.response.data.statusCode === 401)

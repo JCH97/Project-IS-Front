@@ -134,6 +134,11 @@ export default {
 
       localStorage.setItem("cartUserLog", JSON.stringify(this.cartUserLog));
 
+      this.flashMessage.success({
+        title: "Product removed",
+        message: "Product removed from cart successfully!!"
+      });
+
       this.setLength();
     },
     sendMail() {
@@ -147,8 +152,8 @@ export default {
         .post("/api/protected/sendMail", data, { headers: this.headers })
         .then(() => {
           this.flashMessage.success({
-            title: "Confirmacion de envio",
-            message: "Solicitud enviada satisfactoriamente"
+            title: "Mail",
+            message: "Send mail successfully!!!"
           });
           localStorage.removeItem("cartUserLog");
           this.$router.push("/");

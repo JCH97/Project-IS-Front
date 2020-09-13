@@ -1,5 +1,6 @@
 <template>
   <div>
+    <FlashMessage :position="'right top'"></FlashMessage>
     <div class="main-content-wrapper d-flex clearfix">
       <Menu />
       <!-- Product Details Area Start -->
