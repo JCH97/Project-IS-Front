@@ -5,7 +5,7 @@
       <div class="container-login100">
         <div class="wrap-login100">
           <div class="login100-form validate-form">
-            <span class="login100-form-title p-b-26">Bienvenidos</span>
+            <span class="login100-form-title p-b-26">Welcome</span>
 
             <input type="hidden" name="login" :value="this.login" />
 
@@ -15,8 +15,8 @@
                 type="text"
                 id="userName"
                 name="userName"
-                placeholder="Nombre de usuario"
-                v-model="data.userName"
+                placeholder="Email"
+                v-model="data.email"
               />
             </div>
 
@@ -31,7 +31,7 @@
                 type="password"
                 id="password"
                 name="password"
-                placeholder="Contraseña"
+                placeholder="Password"
                 v-model="data.password"
               />
             </div>
@@ -43,7 +43,7 @@
                   type="text"
                   name="firstName"
                   v-model="data.firstName"
-                  placeholder="Nombre"
+                  placeholder="First Name"
                 />
               </div>
 
@@ -53,7 +53,7 @@
                   type="text"
                   name="lastName"
                   v-model="data.lastName"
-                  placeholder="Apellidos"
+                  placeholder="Last Name"
                 />
               </div>
 
@@ -73,7 +73,7 @@
                   type="tel"
                   name="phone"
                   v-model="data.phone"
-                  placeholder="Telefono"
+                  placeholder="Phone"
                 />
               </div>
             </div>
@@ -122,18 +122,12 @@ export default {
   methods: {
     sendFormLogin() {
       this.axios
-        .post("/authenticate", {
-          data: this.data
+        .post("/auth/signin", {
+          email: this.data.email,
+          password: this.data.password
         })
         .then(res => {
-          localStorage.setItem("accessToken", res.data.accessToken);
-          localStorage.setItem("refreshToken", res.data.refreshToken);
-          localStorage.setItem("user", JSON.stringify(res.data.toWork));
-
-          this.$store.state.headers = {
-            "x-access-token": res.data.accessToken
-          };
-
+          this.$cookies.set("user_access_token", res.data.access_token);
           this.$router.push("/");
         })
         .catch(err => {
@@ -145,8 +139,10 @@ export default {
     },
     sendFormRegister() {
       this.axios
-        .post("/register", { data: this.data })
+        .post("/auth/signup", { data: this.data })
         .then(res => {
+          this.$cookies.set("user_access_token", res.data.access_token);
+          this.$router.push("/");
           this.flashMessage.success({
             title: "Confirm register",
             message: `${res.data.userName} register successfully`
