@@ -73,7 +73,6 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
 import Menu from "@/components/Menu.vue";
 export default {
   name: "Principal",

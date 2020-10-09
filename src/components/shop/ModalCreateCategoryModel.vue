@@ -7,9 +7,7 @@
       ok-only
       hide-footer
     >
-      <b-form-text
-        id="name-help"
-      >Add name of category</b-form-text>
+      <b-form-text id="name-help">Add name of category</b-form-text>
       <b-form-input
         class="mb-4"
         :state="name.length > 2"
@@ -21,7 +19,7 @@
       ></b-form-input>
 
       <!-- <label for="tags-basic">Introduzca los modelos.</label>
-      <b-form-tags input-id="tags-basic" v-model="value" class="mb-4"></b-form-tags> -->
+      <b-form-tags input-id="tags-basic" v-model="value" class="mb-4"></b-form-tags>-->
 
       <b-button variant="outline-success" block @click="save()">Save</b-button>
     </b-modal>
@@ -30,7 +28,6 @@
 
 
 <script>
-import { mapState } from "vuex";
 export default {
   name: "ModalCreateCategoryModel",
   data() {
@@ -39,16 +36,16 @@ export default {
     };
   },
   methods: {
-    save() {
+    save: function() {
       this.$refs["modalCreateCategoryModel"].hide();
 
       this.axios
         .post(
-          "/api/protected/admin/category",
-          { name: this.name },
-          { headers: this.headers }
+          "/category",
+          { data: { name: this.name } },
+          { headers: this.$store.state.headers }
         )
-        .then((data) => {
+        .then(data => {
           this.$emit("newCategory", data.data);
           this.name = "";
 
@@ -58,7 +55,7 @@ export default {
           });
         })
         .catch(err => {
-          if (err.response.data.statusCode === 401)
+          if (err.response.data.status === 401)
             this.$router.push("/authenticate");
 
           this.flashMessage.error({
@@ -67,9 +64,6 @@ export default {
           });
         });
     }
-  },
-  computed: {
-    ...mapState(["headers"])
   }
 };
 </script>

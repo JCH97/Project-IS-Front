@@ -18,21 +18,17 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    // addToCart: function ({ dispatch }, data) { //data = { product: Object, quantity: number }
-    //   if (data.product.stock === 0) return;
+    addToCart: function ({ dispatch }, data) { //data = { product: Object, quantity: number }
+      if (data.product.stock === 0) return;
 
-    //   let cart = Array.from(JSON.parse(localStorage.getItem('cartUserLog') || JSON.stringify([])));
+      axios.post('/cart', { data: { product: data.product._id, amount: data.quantity } }, {
+        headers: {
+          "Authorization": `bearer ${cookies.get('user_access_token')}`
+        }
+      });
 
-    //   let obj = cart.find(e => e.product._id === data.product._id);
-    //   if (obj)
-    //     cart[cart.indexOf(obj)].quantity++;
-    //   else
-    //     cart.push(data);
-
-    //   localStorage.setItem('cartUserLog', JSON.stringify(cart));
-
-    //   dispatch('setLength');
-    // },
+      dispatch('lengthCart');
+    },
     lengthCart: function ({ commit }) {
 
       axios.get('/cart/length', {

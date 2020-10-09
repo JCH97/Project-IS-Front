@@ -20,9 +20,9 @@ export default {
     };
   },
   created() {
-    this.isAdmin =
-      JSON.parse(localStorage.getItem("user") || JSON.stringify({})).isAdmin ||
-      false;
+    this.axios.get("/user/me", { headers: this.$store.state.headers }).then(res => {
+      this.isAdmin = res.data.roles.includes("ADMIN");
+    });
   }
 };
 </script>

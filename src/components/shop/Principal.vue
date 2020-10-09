@@ -25,8 +25,8 @@
           <!--  Catagories  -->
           <div class="catagories-menu">
             <ul>
-              <li v-for="item in categories" :key="item._id" :id="item.name">
-                <b-icon-trash v-if="isAdmin" variant="danger" @click="confirmToDelete(item._id)"></b-icon-trash>
+              <li v-for="item in categories" :key="item._id" :id="`id${item._id}`">
+                <b-icon-trash v-if="isAdmin" variant="danger" @click="categoryDelete(item._id)"></b-icon-trash>
                 <span @click="changeClassInCategoryList(item)">
                   <router-link to>{{ item.name }}</router-link>
                 </span>
@@ -42,7 +42,7 @@
                   <b-icon-trash
                     v-if="isAdmin"
                     variant="danger"
-                    @click="confirmToDelete(item, false)"
+                    @click="categoryDelete(item, false)"
                   ></b-icon-trash>
                   <span @click="changeClassInModelList(item)">
                     <router-link to>{{ item }}</router-link>
@@ -84,9 +84,9 @@
               <div class="single-product-wrapper">
                 <!-- Product Image -->
                 <div class="product-img">
-                  <img class="w3-animate-zoom" :src="item.pictureUrl" alt />
+                  <img class="w3-animate-zoom" :src="item.pictureUrl.url" alt />
                   <!-- Hover Thumb -->
-                  <img class="hover-img" :src="item.pictureUrl" alt />
+                  <img class="hover-img" :src="item.pictureUrl.url" alt />
                 </div>
 
                 <!-- Product Description -->
@@ -171,8 +171,7 @@
 import Menu from "@/components/Menu.vue";
 import ModalCreateCategoryModel from "@/components/shop/ModalCreateCategoryModel.vue";
 import ModalBase from "@/components/shop/ModalBase.vue";
-import { mapActions, mapState } from "vuex";
-import { join } from "path";
+import { mapActions } from "vuex";
 export default {
   name: "Principal",
   components: {
@@ -194,7 +193,6 @@ export default {
       paramsModal: {
         title: "",
         textButton: "",
-        url: "",
         isCreate: true,
         data: undefined
       }
@@ -203,10 +201,14 @@ export default {
   mounted() {
     //select categories' list
     this.axios
-      .get("/api/category", { headers: this.headers })
-      .then(data => {
-        this.categories = data.data;
-        this.changeClassInCategoryList(data.data[0], true);
+      .post(
+        "/category/all",
+        { filter: {} },
+        { headers: this.$store.state.headers }
+      )
+      .then(res => {
+        this.categories = res.data;
+        this.changeClassInCategoryList(res.data[0], true);
       })
       .catch(err => {
         console.log(err);
@@ -218,8 +220,9 @@ export default {
         });
       });
   },
+
   methods: {
-    changeClassInCategoryList(category, forCreate = false) {
+    changeClassInCategoryList: function(category, forCreate = false) {
       //format of Category { name: ?, _id: ? }
       if (!forCreate) {
         //select the element with active clase for remove later
@@ -227,39 +230,47 @@ export default {
         if (d) d.classList.remove("active");
 
         //fill new active class
-        document.querySelector(`#${category.name}`).classList.add("active");
+        document.querySelector(`#id${category._id}`).classList.add("active");
+        this.page = 1;
+        this.changeNumberPage(1);
       }
 
       this.selectedCategory = category;
       this.getNewPageToProduct();
     },
 
-    getNewPageToProduct() {
+    getNewPageToProduct: function() {
       const data = {
-        id: this.selectedCategory._id,
-        perPage: this.perPage,
-        page: this.page
+        paginator: {
+          page: this.page,
+          limit: this.perPage
+        },
+        filter: {
+          category: this.selectedCategory._id
+        }
       };
 
       this.axios
-        .post("/api/product/perPage", data, { headers: this.headers })
-        .then(data => {
-          this.parts = data.data.products;
+        .post("/product/paginated", data, {
+          headers: this.$store.state.headers
+        })
+        .then(res => {
+          this.parts = res.data.items;
           this.numberOfPages = Math.ceil(
-            parseFloat(data.data.count) / parseFloat(this.perPage)
+            parseFloat(res.data.total) / parseFloat(this.perPage)
           );
         })
         .catch(err => {
           this.flashMessage.error({
             title: "Error!!!!",
             message:
-              err.response.data.error ||
+              err.response.data ||
               "Error to get data from the server, refresh page plase"
           });
         });
     },
 
-    changeNumberPage(newNumber) {
+    changeNumberPage: function(newNumber) {
       this.page = newNumber;
       this.getNewPageToProduct();
 
@@ -273,11 +284,11 @@ export default {
       document.querySelector(`#n${newNumber}`).classList.add("active");
     },
 
-    newCategory(category) {
+    newCategory: function(category) {
       this.categories.push(category);
     },
 
-    confirmToDelete(idCategory) {
+    categoryDelete: function(idCategory) {
       this.$bvModal
         .msgBoxConfirm("Are you sure?", {
           title: "Confirm delete",
@@ -293,12 +304,12 @@ export default {
         .then(value => {
           if (value) {
             this.axios
-              .delete(`/api/protected/admin/category/${idCategory}`, {
-                headers: this.headers
+              .delete("/category", {
+                headers: this.$store.state.headers,
+                data: { filter: { _id: idCategory } }
               })
               .then(() => {
                 let indx = this.categories.findIndex(e => e._id === idCategory);
-                console.log(indx, idCategory);
                 this.categories.splice(indx, 1);
 
                 if (this.selectedCategory._id === idCategory) {
@@ -307,12 +318,12 @@ export default {
                 }
               })
               .catch(err => {
-                if (err.response.data.statusCode === 401)
+                if (err.response.status === 401)
                   this.$router.push("/authenticate");
 
                 this.flashMessage.error({
                   title: "Error!!!!",
-                  message: err.response.data.error || "Error to remove category"
+                  message: err.response.data || "Error to remove category"
                 });
               });
           }
@@ -320,43 +331,42 @@ export default {
         .catch(err => {
           this.flashMessage.err({
             title: "Error!!!!",
-            message: err
+            message: err.response.data
           });
         });
     },
 
-    addNewProduct() {
+    addNewProduct: function() {
       this.paramsModal.title = "Add new product";
       this.paramsModal.textButton = "Save";
-      this.paramsModal.url = "/api/protected/admin/product";
       this.paramsModal.isCreate = true;
       this.paramsModal.data = {
         name: "",
-        serialNumber: "",
-        dim: "",
         description: "",
         price: 0,
         stock: 0,
-        pictureUrl: join(__dirname, "..", "uploads", "parts", "notFound.jpg"),
+        pictureUrl: "5f7cb832621f2023784b51a0",
         category: this.selectedCategory._id
       };
 
       this.$bvModal.show("modalBase");
     },
 
-    editProduct(data) {
+    editProduct: function(data) {
       this.paramsModal.title = "Edit product";
       this.paramsModal.textButton = "Save";
-      this.paramsModal.url = `/api/protected/admin/product/${data._id}`;
       this.paramsModal.isCreate = false;
       this.paramsModal.data = data;
 
       this.$bvModal.show("modalBase");
     },
 
-    removeProduct(id) {
+    removeProduct: function(id) {
       this.axios
-        .delete(`/api/protected/admin/product/${id}`, { headers: this.headers })
+        .delete("/product", {
+          headers: this.$store.state.headers,
+          data: { filter: { _id: id } }
+        })
         .then(data => {
           let indx = this.parts.indexOf(p => p._id === id);
           this.parts.splice(indx, 1);
@@ -367,18 +377,32 @@ export default {
           });
         })
         .catch(err => {
+          if (err.response.status === 401) this.$router.push("/authenticate");
           this.flashMessage.error({
             title: "Error!!!!",
-            message: err.response.data.error || "Not removed product"
+            message: err.response.data || "Not removed product"
           });
         });
     },
 
-    partsChange(part) {
-      //val => Object con todo lo de la pieza que se agrega
+    partsChange: function(part) {
+      //part => Producto que se cambio o se agrego
 
       if (this.paramsModal.isCreate) {
-        this.parts.push(part);
+        if (this.parts.length < this.perPage) { //si el producto cabe en la pagina actual
+          this.parts.push(part);
+        }
+        else {                                  //recalcular el numero de paginas
+             this.axios
+          .post(
+            "/product/count",
+            { filter: { category: part.category } },
+            { headers: this.$store.state.headers }
+          )
+          .then(
+            res => (this.numberOfPages = Math.ceil(res.data / this.perPage))
+          );
+        }
       } else {
         let indx = this.parts.findIndex(e => e._id === part._id);
         if (indx > -1) this.parts[indx] = part;
@@ -386,10 +410,8 @@ export default {
 
       // if (this.parts.length < this.perPage) this.parts.push(part);
     },
+
     ...mapActions(["addToCart"])
-  },
-  computed: {
-    ...mapState(["headers"])
   }
 };
 </script>

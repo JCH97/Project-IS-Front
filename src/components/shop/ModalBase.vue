@@ -93,7 +93,11 @@ export default {
       this.pre();
       if (this.params.isCreate)
         this.axios
-          .post(this.params.url, this.params.data, { headers: this.headers })
+          .post(
+            "/product",
+            { data: this.params.data },
+            { headers: this.$store.state.headers }
+          )
           .then(res => {
             this.ok(res.data);
 
@@ -107,11 +111,15 @@ export default {
               this.$router.push("/authenticate");
             this.fail(err.response.data.error || "Error to save");
           });
-      else
+      else {
         this.axios
-          .put(this.params.url, this.params.data, { headers: this.headers })
-          .then(data => {
-            this.ok(data.data);
+          .put(
+            "/product",
+            { updt: this.params.data, filter: { _id: this.params.data._id } },
+            { headers: this.headers }
+          )
+          .then(res => {
+            this.ok(res.data);
 
             this.flashMessage.success({
               title: "Product edited",
@@ -123,6 +131,7 @@ export default {
               this.$router.push("/authenticate");
             this.fail(err.response.data.error || "Error to save");
           });
+      }
     },
     saveImage(val) {
       this.params.data.pictureUrl = val;
