@@ -1,13 +1,15 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import * as cookies from "vue-cookies";
+import * as axios from "axios";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
     lengthCart: 0, // [{ product1, quantity1 }, { prodcut2, quantity2 }, ... 
-    headers: { 
-      "x-access-token": localStorage.getItem("accessToken") || JSON.stringify("")
+    headers: {
+      Authorization: `bearer ${cookies.get("user_access_token")}`
     }
   },
   mutations: {
@@ -16,27 +18,34 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    addToCart: function ({ dispatch }, data) { //data = { product: Object, quantity: number }
-      if (data.product.stock === 0) return;
+    // addToCart: function ({ dispatch }, data) { //data = { product: Object, quantity: number }
+    //   if (data.product.stock === 0) return;
 
-      let cart = Array.from(JSON.parse(localStorage.getItem('cartUserLog') || JSON.stringify([])));
+    //   let cart = Array.from(JSON.parse(localStorage.getItem('cartUserLog') || JSON.stringify([])));
 
-      let obj = cart.find(e => e.product._id === data.product._id);
-      if (obj)
-        cart[cart.indexOf(obj)].quantity++;
-      else
-        cart.push(data);
+    //   let obj = cart.find(e => e.product._id === data.product._id);
+    //   if (obj)
+    //     cart[cart.indexOf(obj)].quantity++;
+    //   else
+    //     cart.push(data);
 
-      localStorage.setItem('cartUserLog', JSON.stringify(cart));
+    //   localStorage.setItem('cartUserLog', JSON.stringify(cart));
 
-      dispatch('setLength');
-    },
-    setLength: function ({ commit }) {
-      let cart = Array.from(JSON.parse(localStorage.getItem('cartUserLog') || JSON.stringify([])));
-      let len = 0;
-      cart.forEach(e => { len += e.quantity });
+    //   dispatch('setLength');
+    // },
+    lengthCart: function ({ commit }) {
 
-      commit('setLength', len);
+      axios.get('/cart/length', {
+        headers: {
+          "Authorization": `bearer ${cookies.get('user_access_token')}`
+        }
+      }).then(res => {
+        commit('setLength', res.data);
+      })
+        .catch(e => {
+          console.error(e);
+        });
+
     },
   },
   modules: {}

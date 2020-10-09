@@ -87,7 +87,7 @@ export default {
   },
   mounted() {
     this.axios
-      .get("/api/product/top/9", { headers: this.headers })
+      .get("/product/top/9", { headers: this.$store.state.headers })
       .then(data => {
         this.top = data.data;
       })
@@ -98,8 +98,5 @@ export default {
         });
       });
   },
-  computed: {
-    ...mapState(["headers"])
-  }
 };
 </script>

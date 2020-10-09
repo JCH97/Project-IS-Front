@@ -24,10 +24,10 @@
         </template>
 
         <template v-slot:row-details="row">
-          <b-card>
+          <b-card v-model="row.item.roles">
             <b-row class="mb-2">
               <b-col sm="3" class="text-sm-right">
-                <b>Discount:</b>
+                <b>Discount in percent:</b>
               </b-col>
               <b-col cols="3">
                 <b-form-input type="number" v-model="row.item.discount"></b-form-input>
@@ -36,7 +36,7 @@
 
             <b-row class="mb-2">
               <b-col sm="3" class="text-sm-right">
-                <b>Is admin?</b>
+                <b>ADMIN?:</b>
               </b-col>
               <b-col cols="3">
                 <b-form-checkbox v-model="row.item.isAdmin"></b-form-checkbox>
@@ -44,7 +44,7 @@
             </b-row>
 
             <b-button class="mr-4" variant="danger" size="sm" @click="row.toggleDetails">Close</b-button>
-            <b-button v-if="!hide" variant="success" size="sm" @click="save(row.item)">Save</b-button>
+            <b-button variant="success" size="sm" @click="save(row.item)">Save</b-button>
           </b-card>
         </template>
       </b-table>
@@ -53,22 +53,11 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
 export default {
   name: "User",
   data() {
     return {
-      hide: false,
       fields: [
-        {
-          key: "fullName",
-          label: "FULL NAME",
-          sortable: true
-        },
-        {
-          key: "userName",
-          label: "USER NAME"
-        },
         {
           key: "email",
           label: "EMAIL"
@@ -89,42 +78,58 @@ export default {
         },
         {
           key: "isAdmin",
-          label: "IS ADMIN? "
+          label: "Is admin ?"
         },
         {
           key: "show_details",
           label: "EDIT"
         }
       ],
-      items: []
+      items: [],
+      page: 1,
+      limit: 25
     };
   },
   mounted() {
     this.getData();
   },
   methods: {
-    getData() {
+    getData: function() {
       this.axios
-        .get("/api/protected/admin/user", { headers: this.headers })
+        .post(
+          "/user/paginated",
+          { paginator: { page: this.page, limit: this.limit }, filter: {} },
+          { headers: this.$store.state.headers }
+        )
         .then(res => {
-          this.items = res.data;
-          
-          let userNameLogin = (JSON.parse(localStorage.getItem('user') || JSON.stringify(""))).userName;
-          let indx = this.items.findIndex(u => u.userName === userNameLogin);
-          this.items.splice(indx, 1);
+          this.items = res.data.items.map(u => {
+            return { ...u, isAdmin: u.roles.includes("ADMIN") ? true : false };
+          });
+        })
+        .catch(e => {
+          if (e.response.status === 401) this.$router.push("/authenticate");
         });
     },
-    save(data) {
-      this.hide = true;
+    save: function(data) {
+      //data: User
+      data.roles = ["USER"];
+      if (data.isAdmin) data.roles.push("ADMIN");
+
       this.axios.put(
-        `/api/protected/admin/user/${data._id}`,
-        { isAdmin: data.isAdmin, discount: data.discount },
-        { headers: this.headers }
+        "/user",
+        {
+          filter: { _id: data._id },
+          updt: { roles: data.roles, discount: data.discount }
+        },
+        { headers: this.$store.state.headers }
       );
+
+      this.$root.$emit("bv::hide::modal", 'modalTableUser');
     }
   },
-  computed: {
-    ...mapState(["headers"])
+  makeAdmin: function(user) {
+    user.roles.push("ADMIN");
+    console.log(user);
   }
 };
 </script>

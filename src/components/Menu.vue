@@ -45,7 +45,7 @@
                 <span class="w3-badge w3-orange">{{ this.lengthCart }}</span>
               </router-link>
             </li>
-            <li v-if="user.isAdmin" id="li-user">
+            <li v-if="user.roles && user.roles.includes('ADMIN')" id="li-user">
               <router-link to>
                 <div v-b-modal.modalTableUser>User</div>
               </router-link>
@@ -56,7 +56,7 @@
               <router-link to="/authenticate">Login</router-link>
             </li>
             <li v-else>
-              <p>Bienvenido, {{ this.user.userName }}</p>
+              <p>Welcome, {{ this.user.email }}</p>
             </li>
           </div>
         </ul>
@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState } from "vuex";
 import User from "@/components/home/User.vue";
 export default {
   name: "Menu",
@@ -98,23 +98,25 @@ export default {
       user: {}
     };
   },
-  mounted() {
-    this.user = JSON.parse(localStorage.getItem("user") || JSON.stringify(null));
+  created() {
+    this.axios
+      .get("/user/me", { headers: this.$store.state.headers })
+      .then(res => (this.user = res.data))
+      .catch(e => { if(e.response.status === 401) this.$router.push("/authenticate"); });
 
-    this.setLength();
+    this.$store.dispatch("lengthCart");
   },
   methods: {
-    changeClass() {
+    changeClass: function() {
       let d = document.querySelector("header");
 
       if (d.classList.contains("bp-xs-on")) d.classList.remove("bp-xs-on");
       else d.classList.add("bp-xs-on");
     },
-    changeClassMenu(id) {
+    changeClassMenu: function(id) {
       document.querySelector("li.active").classList.remove("active");
       document.querySelector(`#${id}`).classList.add("active");
-    },
-    ...mapActions(["addToCart", "setLength"])
+    }
   },
   computed: {
     ...mapState(["lengthCart"])

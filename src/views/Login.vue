@@ -120,14 +120,20 @@ export default {
     };
   },
   methods: {
-    sendFormLogin() {
+    setHeadersAndCookie: function(token) {
+      this.$cookies.set("user_access_token", token);
+      this.$store.state.headers = {
+        Authorization: `bearer ${token}`
+      };
+    },
+    sendFormLogin: function() {
       this.axios
         .post("/auth/signin", {
           email: this.data.email,
           password: this.data.password
         })
         .then(res => {
-          this.$cookies.set("user_access_token", res.data.access_token);
+          this.setHeadersAndCookie(res.data.access_token);
           this.$router.push("/");
         })
         .catch(err => {
@@ -141,12 +147,14 @@ export default {
       this.axios
         .post("/auth/signup", { data: this.data })
         .then(res => {
-          this.$cookies.set("user_access_token", res.data.access_token);
+          this.setHeadersAndCookie(res.data.access_token);
           this.$router.push("/");
+
           this.flashMessage.success({
             title: "Confirm register",
             message: `${res.data.userName} register successfully`
           });
+          
           this.login = true;
         })
         .catch(err => {
