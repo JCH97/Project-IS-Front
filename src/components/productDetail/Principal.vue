@@ -14,10 +14,7 @@
                     <router-link to="/">Home</router-link>
                   </li>
                   <li class="breadcrumb-item">
-                    <router-link to>{{ this.product.car.model.split('@')[0] }}</router-link>
-                  </li>
-                  <li class="breadcrumb-item">
-                    <router-link to>{{ this.product.car.model.split('@')[1] }}</router-link>
+                    <router-link to>{{ this.product.category.name }}</router-link>
                   </li>
                 </ol>
               </nav>
@@ -142,7 +139,7 @@ export default {
     changeColorToStock() {
       if (this.product.stock <= 2) return "red";
       return "#20d34a";
-    }
+    }, 
   }
 };
 </script>

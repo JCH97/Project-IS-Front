@@ -99,9 +99,7 @@ export default {
     };
   },
   mounted() {
-    this.user = JSON.parse(
-      localStorage.getItem("user") || JSON.stringify(null)
-    );
+    this.user = JSON.parse(localStorage.getItem("user") || JSON.stringify(null));
 
     this.setLength();
   },

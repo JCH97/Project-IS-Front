@@ -27,7 +27,7 @@
           <b-card>
             <b-row class="mb-2">
               <b-col sm="3" class="text-sm-right">
-                <b>Descuento:</b>
+                <b>Discount:</b>
               </b-col>
               <b-col cols="3">
                 <b-form-input type="number" v-model="row.item.discount"></b-form-input>
@@ -36,15 +36,15 @@
 
             <b-row class="mb-2">
               <b-col sm="3" class="text-sm-right">
-                <b>Es admin?</b>
+                <b>Is admin?</b>
               </b-col>
               <b-col cols="3">
                 <b-form-checkbox v-model="row.item.isAdmin"></b-form-checkbox>
               </b-col>
             </b-row>
 
-            <b-button class="mr-4" variant="danger" size="sm" @click="row.toggleDetails">Cerrar</b-button>
-            <b-button v-if="!hide" variant="success" size="sm" @click="save(row.item)">Guardar</b-button>
+            <b-button class="mr-4" variant="danger" size="sm" @click="row.toggleDetails">Close</b-button>
+            <b-button v-if="!hide" variant="success" size="sm" @click="save(row.item)">Save</b-button>
           </b-card>
         </template>
       </b-table>
@@ -62,38 +62,38 @@ export default {
       fields: [
         {
           key: "fullName",
-          label: "Nombre completo",
+          label: "FULL NAME",
           sortable: true
         },
         {
           key: "userName",
-          label: "Nombre de usuario"
+          label: "USER NAME"
         },
         {
           key: "email",
-          label: "Correo"
+          label: "EMAIL"
         },
         {
           key: "phone",
-          label: "Teléfono"
+          label: "PHONE"
         },
         {
           key: "invertMoney",
-          label: "Dinero invertido",
+          label: "INVERT MONEY",
           sortable: true
         },
         {
           key: "discount",
-          label: "Descuento",
+          label: "DISCOUNT",
           sortable: true
         },
         {
           key: "isAdmin",
-          label: "Es admin? "
+          label: "IS ADMIN? "
         },
         {
           key: "show_details",
-          label: "Editar"
+          label: "EDIT"
         }
       ],
       items: []
@@ -105,16 +105,19 @@ export default {
   methods: {
     getData() {
       this.axios
-        .get("/api/protected/user", { headers: this.headers })
+        .get("/api/protected/admin/user", { headers: this.headers })
         .then(res => {
           this.items = res.data;
+          
+          let userNameLogin = (JSON.parse(localStorage.getItem('user') || JSON.stringify(""))).userName;
+          let indx = this.items.findIndex(u => u.userName === userNameLogin);
+          this.items.splice(indx, 1);
         });
     },
     save(data) {
-      console.log(data._id);
       this.hide = true;
       this.axios.put(
-        `/api/protected/user/${data._id}`,
+        `/api/protected/admin/user/${data._id}`,
         { isAdmin: data.isAdmin, discount: data.discount },
         { headers: this.headers }
       );

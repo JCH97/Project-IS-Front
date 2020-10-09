@@ -3,28 +3,18 @@
     <UploadImage @saveImage="saveImage" />
     <b-modal id="modalBase" ref="modalBase" :title="params.title" ok-only hide-footer>
       <b-form-group v-if="params.data">
-        <b-form-text id="name-help">Ingrese el nombre del producto.</b-form-text>
+        <b-form-text id="name-help">Add name.</b-form-text>
         <b-form-input
           class="mb-4"
           name="name"
           id="name"
-          placeholder="Nombre"
+          placeholder="Name"
           aria-describedby="name-help name-invalid"
           :state="params.data.name.length > 2"
           v-model="params.data.name"
         ></b-form-input>
 
-        <b-form-text id="serialNumber-help">Ingrese el numero de serie del producto</b-form-text>
-        <b-form-input
-          class="mb-4"
-          name="serialNumber"
-          id="serialNumber"
-          aria-describedby="serialNumber-help"
-          placeholder="Numero de serie"
-          v-model="params.data.serialNumber"
-        ></b-form-input>
-
-        <b-form-text id="price-help">Ingrese el precio del producto</b-form-text>
+        <b-form-text id="price-help">Add cost.</b-form-text>
         <b-form-input
           type="number"
           class="mb-4"
@@ -35,17 +25,7 @@
           v-model="params.data.price"
         ></b-form-input>
 
-        <b-form-text id="dim-help">Ingrese las dimensiones del producto</b-form-text>
-        <b-form-input
-          type="text"
-          class="mb-4"
-          name="dim"
-          id="dim"
-          aria-describedby="dim-help"
-          v-model="params.data.dim"
-        ></b-form-input>
-
-        <b-form-text id="stocks-help">Ingrese el stock del producto</b-form-text>
+        <b-form-text id="stocks-help">Add stock.</b-form-text>
         <b-form-input
           type="number"
           class="mb-4"
@@ -56,7 +36,7 @@
           v-model="params.data.stock"
         ></b-form-input>
 
-        <b-form-text id="description-help">Ingrese la descripcion del producto</b-form-text>
+        <b-form-text id="description-help">Add description.</b-form-text>
         <b-form-textarea
           class="mb-4"
           name="description"
@@ -64,6 +44,7 @@
           v-model="params.data.description"
           aria-describedby="description-help"
           no-resize
+          placeholder="Description"
         ></b-form-textarea>
 
         <b-button

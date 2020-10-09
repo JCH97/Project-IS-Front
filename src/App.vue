@@ -10,11 +10,7 @@ export default {
   created() {
     this.axios
       .get("/checkToken", {
-        headers: {
-          "x-access-token": localStorage.getItem(
-            "accessToken" || JSON.stringify("")
-          )
-        }
+        headers: {"x-access-token": localStorage.getItem("accessToken" || JSON.stringify(""))}
       })
       .catch(() => {
         localStorage.clear();

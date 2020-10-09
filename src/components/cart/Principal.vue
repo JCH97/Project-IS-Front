@@ -150,11 +150,18 @@ export default {
 
       this.axios
         .post("/api/protected/sendMail", data, { headers: this.headers })
-        .then(() => {
-          this.flashMessage.success({
-            title: "Mail",
-            message: "Send mail successfully!!!"
-          });
+        .then(data => {
+          if (data.data.env)
+            this.flashMessage.success({
+              title: "Mail",
+              message: "Development mode, not send mail; but all works ok!!!"
+            });
+          else
+            this.flashMessage.success({
+              title: "Mail",
+              message: "Send mail successfully!!!"
+            });
+
           localStorage.removeItem("cartUserLog");
           this.$router.push("/");
         })

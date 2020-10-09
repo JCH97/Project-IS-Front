@@ -14,11 +14,11 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 Vue.config.productionTip = false;
 Vue.use(vueAxios, axios)
-Vue.use(flashMessage, { strategy: 'multiple' });
+Vue.use(flashMessage);
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
 
-axios.defaults.baseURL = "http://localhost:3000"
+axios.defaults.baseURL = "http://localhost:4000"
 
 new Vue({
   router,

@@ -130,6 +130,10 @@ export default {
           localStorage.setItem("refreshToken", res.data.refreshToken);
           localStorage.setItem("user", JSON.stringify(res.data.toWork));
 
+          this.$store.state.headers = {
+            "x-access-token": res.data.accessToken
+          };
+
           this.$router.push("/");
         })
         .catch(err => {

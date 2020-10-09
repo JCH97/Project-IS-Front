@@ -87,7 +87,7 @@ export default {
   },
   mounted() {
     this.axios
-      .get("/api/part/top/9", { headers: this.headers })
+      .get("/api/product/top/9", { headers: this.headers })
       .then(data => {
         this.top = data.data;
       })

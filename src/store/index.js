@@ -6,7 +6,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     lengthCart: 0, // [{ product1, quantity1 }, { prodcut2, quantity2 }, ... 
-    headers: {
+    headers: { 
       "x-access-token": localStorage.getItem("accessToken") || JSON.stringify("")
     }
   },
