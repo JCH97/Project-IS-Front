@@ -231,8 +231,9 @@ export default {
 
         //fill new active class
         document.querySelector(`#id${category._id}`).classList.add("active");
+        
         this.page = 1;
-        this.changeNumberPage(1);
+        // this.changeNumberPage(1);
       }
 
       this.selectedCategory = category;

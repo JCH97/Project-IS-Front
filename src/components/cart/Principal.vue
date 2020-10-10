@@ -22,7 +22,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(item) in cartUserLog" :key="item.product._id">
+                    <tr v-for="(item) in cart" :key="item.product._id">
                       <td class="cart_product_img">
                         <img :src="item.product.pictureUrl" alt="Photo" />
                       </td>
@@ -99,17 +99,22 @@ export default {
   },
   data() {
     return {
-      cartUserLog: [],
+      cart: [],
       costToDelivery: 0
     };
   },
   mounted() {
-    this.cartUserLog = JSON.parse(
-      localStorage.getItem("cartUserLog") || JSON.stringify([])
-    );
+    this.axios
+      .get("/cart", { headers: this.$store.state.headers })
+      .then(res => {
+        this.cart = res.data;
+      })
+      .catch(e => {
+        if (e.response.status === 401) this.$router.push("/authenticate");
+      });
   },
   methods: {
-    calcCost() {
+    calcCost: function() {
       let totalPrice = parseFloat(0);
       this.cartUserLog.forEach(e => {
         totalPrice += parseFloat(e.product.price) * parseFloat(e.quantity);
@@ -117,11 +122,11 @@ export default {
 
       return totalPrice + this.costToDelivery;
     },
-    setCostToDelivery(value) {
+    setCostToDelivery: function(value) {
       //console.log(`from cart principal ${Object.keys(value)[0]}`);
       this.costToDelivery = value[Object.keys(value)[0]];
     },
-    deleteProdCart(toDelete) {
+    deleteProdCart: function(toDelete) {
       //toDelete: { product: Object, quantity: Number }
       let obj = this.cartUserLog.find(
         e => e.product._id === toDelete.product._id
@@ -141,7 +146,7 @@ export default {
 
       this.setLength();
     },
-    sendMail() {
+    sendMail: function() {
       let data = {
         subject: "Solicitud de compra por internet",
         text: JSON.stringify(data),
