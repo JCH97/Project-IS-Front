@@ -104,7 +104,7 @@ export default {
       .then(res => (this.user = res.data))
       .catch(e => { if(e.response.status === 401) this.$router.push("/authenticate"); });
 
-    this.$store.dispatch("lengthCart");
+    this.$store.dispatch("setLengthCart");
   },
   methods: {
     changeClass: function() {

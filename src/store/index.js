@@ -19,17 +19,16 @@ export default new Vuex.Store({
   },
   actions: {
     addToCart: function ({ dispatch }, data) { //data = { product: Object, quantity: number }
-      if (data.product.stock === 0) return;
-
+      console.log(data);
       axios.post('/cart', { data: { product: data.product._id, amount: data.quantity } }, {
         headers: {
           "Authorization": `bearer ${cookies.get('user_access_token')}`
         }
       });
 
-      dispatch('lengthCart');
+      dispatch('setLengthCart');
     },
-    lengthCart: function ({ commit }) {
+    setLengthCart: function ({ commit }) {
 
       axios.get('/cart/length', {
         headers: {
@@ -41,7 +40,6 @@ export default new Vuex.Store({
         .catch(e => {
           console.error(e);
         });
-
     },
   },
   modules: {}

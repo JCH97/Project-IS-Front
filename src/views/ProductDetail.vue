@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Principal :product="product" />
+    <Principal :productId="productId" />
     <Footer />
   </div>
 </template>
@@ -16,11 +16,11 @@ export default {
   },
   data() {
     return {
-      product: Object
+      productId: String
     };
   },
   created() {
-    this.product = this.$route.params.obj;
+    this.productId = this.$route.params.productId;
   }
 };
 </script>

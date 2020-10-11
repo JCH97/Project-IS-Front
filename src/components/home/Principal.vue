@@ -21,7 +21,7 @@
                 class="w3-col m4 s12 single-products-catagory clearfix w3-animate-zoom"
                 v-if="top[(index - 1) * 3]"
               >
-                <router-link :to="{ name: 'ProductDetail', params: { obj: top[(index - 1) * 3] } }">
+                <router-link :to="{ name: 'ProductDetail', params: { productId: top[(index - 1) * 3]._id } }">
                   <img :src="top[(index - 1) * 3].pictureUrl" alt />
                   <!-- Hover Content -->
                   <div class="hover-content">
@@ -36,7 +36,7 @@
                 v-if="top[(index - 1) * 3 + 1]"
               >
                 <router-link
-                  :to="{ name: 'ProductDetail', params: { obj: top[(index - 1) * 3 + 1] } }"
+                  :to="{ name: 'ProductDetail', params: { productId: top[(index - 1) * 3 + 1]._id } }"
                 >
                   <img :src="top[(index - 1) * 3 + 1].pictureUrl" alt />
                   <!-- Hover Content -->
@@ -52,7 +52,7 @@
                 v-if="top[(index - 1) * 3 + 2]"
               >
                 <router-link
-                  :to="{ name: 'ProductDetail', params: { obj: top[(index - 1) * 3 + 2] } }"
+                  :to="{ name: 'ProductDetail', params: { productId: top[(index - 1) * 3 + 2]._id } }"
                 >
                   <img :src="top[(index - 1) * 3 + 2].pictureUrl" alt />
                   <!-- Hover Content -->

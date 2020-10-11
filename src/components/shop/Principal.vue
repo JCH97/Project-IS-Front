@@ -95,7 +95,7 @@
                   <div class="product-meta-data">
                     <div class="line"></div>
                     <p class="product-price">${{ item.price }}</p>
-                    <router-link :to="{ name: 'ProductDetail', params: { obj: item} }">
+                    <router-link :to="{ name: 'ProductDetail', params: { productId: item._id } }">
                       <h6>{{ item.name }}</h6>
                     </router-link>
                   </div>
