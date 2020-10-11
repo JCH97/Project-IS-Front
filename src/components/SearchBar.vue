@@ -1,10 +1,10 @@
 <template>
-  <div id="searchBar" style="display: none;">
+  <div id="searchBar">
     <div class="p-1 bg-light rounded rounded-pill shadow-sm mb-4 w3-padding-16">
       <div class="input-group container">
         <input
           type="search"
-          v-model="querySearch"
+          v-model="query"
           placeholder="What're you searching for?"
           aria-describedby="button-addon1"
           class="form-control border-0 bg-light"
@@ -21,6 +21,16 @@
 
 <script>
 export default {
-  name: "SearchBar"
+  name: "SearchBar",
+  data() {
+    return {
+      query: ""
+    }
+  },
+  watch: {
+    query: function() {
+      this.$emit('changeQuerySearch', this.query);
+    }
+  },
 };
 </script>

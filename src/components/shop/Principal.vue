@@ -1,6 +1,7 @@
 <template>
   <div>
     <FlashMessage :position="'right top'"></FlashMessage>
+    <SearchBar @changeQuerySearch="querySearch"/>
     <ModalBase :params="paramsModal" @partsChange="partsChange" />
     <ModalCreateCategoryModel @newCategory="newCategory" />
     <div class="main-content-wrapper d-flex clearfix">
@@ -171,13 +172,15 @@
 import Menu from "@/components/Menu.vue";
 import ModalCreateCategoryModel from "@/components/shop/ModalCreateCategoryModel.vue";
 import ModalBase from "@/components/shop/ModalBase.vue";
+import SearchBar from "@/components/SearchBar.vue";
 import { mapActions } from "vuex";
 export default {
   name: "Principal",
   components: {
     Menu,
     ModalBase,
-    ModalCreateCategoryModel
+    ModalCreateCategoryModel,
+    SearchBar
   },
   props: {
     isAdmin: Boolean
@@ -188,8 +191,9 @@ export default {
       selectedCategory: undefined, // look like this => { name: "", _id: "" },
       parts: [], //window of product
       page: 1,
-      perPage: 6,
+      perPage: 2,
       numberOfPages: 0,
+      query: '',
       paramsModal: {
         title: "",
         textButton: "",
@@ -241,13 +245,14 @@ export default {
     },
 
     getNewPageToProduct: function() {
-      const data = {
+      let data = {
         paginator: {
           page: this.page,
           limit: this.perPage
         },
         filter: {
-          category: this.selectedCategory._id
+          category: this.selectedCategory._id,
+          name: { '$regex': `.*${this.query}.*`, '$options': 'i' }
         }
       };
 
@@ -410,6 +415,12 @@ export default {
       }
 
       // if (this.parts.length < this.perPage) this.parts.push(part);
+    },
+
+    querySearch: function(query) {
+      this.query = query;
+    
+      this.changeNumberPage(1);
     },
 
     ...mapActions(["addToCart"])
