@@ -80,15 +80,18 @@ export default {
     ok(ans) {
       this.$emit("partsChange", ans);
     },
+
     fail(msj) {
       this.flashMessage.error({
         title: "Error!!!!",
         message: msj
       });
     },
+
     pre() {
       this.$refs["modalBase"].hide();
     },
+
     saveProduct() {
       this.pre();
       if (this.params.isCreate)
@@ -133,10 +136,12 @@ export default {
           });
       }
     },
+    
     saveImage(idFile) {
       this.params.data.pictureUrl = idFile;
     }
   },
+  
   computed: {
     ...mapState(["headers"])
   }

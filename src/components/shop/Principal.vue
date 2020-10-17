@@ -90,7 +90,7 @@
             </div>
           </div>
 
-          <div class="row">
+          <div class="row" :key="forReRender">
             <!-- Single Product Area -->
             <div
               class="col-12 col-sm-6 col-md-12 col-xl-6"
@@ -157,7 +157,7 @@
                         <div v-else>
                           <b-icon-cart4
                             font-scale="2"
-                            @click="addToCart({ product: item, quantity: 1 })"
+                            @click="{item.stock -= 1;  addToCart({ product: item, quantity: 1 })}"
                           ></b-icon-cart4>
                         </div>
                       </router-link>
@@ -241,7 +241,7 @@ export default {
       selectedCategory: undefined, // look like this => { name: "", _id: "" },
       parts: [], //window of product
       page: 1,
-      perPage: 2,
+      perPage: 6,
       numberOfPages: 0,
       query: "",
       productIdAuction: "",
@@ -250,7 +250,8 @@ export default {
         textButton: "",
         isCreate: true,
         data: undefined
-      }
+      },
+      forReRender: 0
     };
   },
   mounted() {
@@ -425,8 +426,11 @@ export default {
           data: { filter: { _id: id } }
         })
         .then(data => {
-          let indx = this.parts.indexOf(p => p._id === id);
-          this.parts.splice(indx, 1);
+          for (let i = 0; i < this.parts.length; i++)
+            if(this.parts[i]._id === id) {
+              this.parts.splice(i, 1);
+              break;
+            }
 
           this.flashMessage.success({
             title: "Product removed",
@@ -464,6 +468,8 @@ export default {
       } else {
         let indx = this.parts.findIndex(e => e._id === part._id);
         if (indx > -1) this.parts[indx] = part;
+
+        this.forReRender += 1;
       }
 
       // if (this.parts.length < this.perPage) this.parts.push(part);

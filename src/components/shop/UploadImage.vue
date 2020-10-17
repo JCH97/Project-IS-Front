@@ -30,7 +30,6 @@ export default {
   methods: {
     onSelect() {
       this.file = this.$refs.file.files[0];
-      console.log(this.file);
     },
     saveImage() {
       this.$refs["modalPhoto"].hide();

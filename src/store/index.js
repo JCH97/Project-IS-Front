@@ -22,8 +22,8 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    addToCart: function ({ dispatch }, data) { //data = { product: Object, quantity: number }
-      if (data.product.stock <= 0) return;
+    addToCart: function ({ dispatch }, data) { //data = { product: Object, quantity: number }      
+      if (data.product.stock < 0) return;
       axios.post('/cart', { data: { product: data.product._id, amount: data.quantity } }, {
         headers: {
           "Authorization": `bearer ${cookies.get('user_access_token')}`

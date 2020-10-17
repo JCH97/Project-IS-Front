@@ -22,7 +22,7 @@
                 v-if="top[(index - 1) * 3]"
               >
                 <router-link :to="{ name: 'ProductDetail', params: { productId: top[(index - 1) * 3]._id } }">
-                  <img :src="top[(index - 1) * 3].pictureUrl" alt />
+                  <img :src="top[(index - 1) * 3].pictureUrl.url" alt />
                   <!-- Hover Content -->
                   <div class="hover-content">
                     <div class="line"></div>
@@ -38,7 +38,7 @@
                 <router-link
                   :to="{ name: 'ProductDetail', params: { productId: top[(index - 1) * 3 + 1]._id } }"
                 >
-                  <img :src="top[(index - 1) * 3 + 1].pictureUrl" alt />
+                  <img :src="top[(index - 1) * 3 + 1].pictureUrl.url" alt />
                   <!-- Hover Content -->
                   <div class="hover-content">
                     <div class="line"></div>
@@ -54,7 +54,7 @@
                 <router-link
                   :to="{ name: 'ProductDetail', params: { productId: top[(index - 1) * 3 + 2]._id } }"
                 >
-                  <img :src="top[(index - 1) * 3 + 2].pictureUrl" alt />
+                  <img :src="top[(index - 1) * 3 + 2].pictureUrl.url" alt />
                   <!-- Hover Content -->
                   <div class="hover-content">
                     <div class="line"></div>
