@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-modal ref="modalPhoto" id="modalAddPhoto" size="md" title="Agregar foto" ok-only hide-footer>
+    <b-modal ref="modalPhoto" id="modalAddPhoto" size="md" title="Add photo" ok-only hide-footer>
       <form @submit.prevent="saveImage()" enctype="multipart/form-data">
         <input
           class="mb-4"
@@ -39,11 +39,12 @@ export default {
       fromData.append("image", this.file);
 
       this.axios
-        .post("/api/protected/admin/part/uploadImage", fromData, {
+        .post("/file", fromData, {
           headers: this.headers
         })
         .then(res => {
-          this.$emit("saveImage", res.data.image);
+          // res.data => _id - url
+          this.$emit("saveImage", res.data._id);
 
           this.flashMessage.success({
             title: "Image",

@@ -12,6 +12,7 @@ import 'bootstrap-vue/dist/bootstrap-vue-icons.min.css'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import * as cookies from "vue-cookies";
+import CircularCountDownTimer from "vue-circular-count-down-timer";
 
 Vue.config.productionTip = false;
 Vue.use(vueAxios, axios)
@@ -19,6 +20,7 @@ Vue.use(flashMessage);
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
 Vue.use(cookies);
+Vue.use(CircularCountDownTimer)
 
 axios.defaults.baseURL = "http://localhost:4000"
 

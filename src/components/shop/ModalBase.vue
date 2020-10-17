@@ -133,8 +133,8 @@ export default {
           });
       }
     },
-    saveImage(val) {
-      this.params.data.pictureUrl = val;
+    saveImage(idFile) {
+      this.params.data.pictureUrl = idFile;
     }
   },
   computed: {

@@ -6,6 +6,7 @@ import Shop from "../views/Shop.vue"
 import Login from "../views/Login.vue";
 import ProductDetail from "../views/ProductDetail.vue";
 import Cart from "../views/Cart.vue";
+import Auction from "../views/Auction.vue"
 
 Vue.use(VueRouter);
 
@@ -36,6 +37,11 @@ const routes = [
     name: "Cart",
     component: Cart
   },
+  {
+    path: '/auction',
+    name: "Auction",
+    component: Auction
+  }
 ];
 
 const router = new VueRouter({

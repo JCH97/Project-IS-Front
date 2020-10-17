@@ -1,9 +1,10 @@
 <template>
   <div>
     <FlashMessage :position="'right top'"></FlashMessage>
-    <SearchBar @changeQuerySearch="querySearch"/>
+    <SearchBar @changeQuerySearch="querySearch" />
     <ModalBase :params="paramsModal" @partsChange="partsChange" />
     <ModalCreateCategoryModel @newCategory="newCategory" />
+    <ModalCreateAuction @dataAuction="dataAuction" />
     <div class="main-content-wrapper d-flex clearfix">
       <Menu />
       <div class="shop_sidebar_area">
@@ -26,8 +27,16 @@
           <!--  Catagories  -->
           <div class="catagories-menu">
             <ul>
-              <li v-for="item in categories" :key="item._id" :id="`id${item._id}`">
-                <b-icon-trash v-if="isAdmin" variant="danger" @click="categoryDelete(item._id)"></b-icon-trash>
+              <li
+                v-for="item in categories"
+                :key="item._id"
+                :id="`id${item._id}`"
+              >
+                <b-icon-trash
+                  v-if="isAdmin"
+                  variant="danger"
+                  @click="categoryDelete(item._id)"
+                ></b-icon-trash>
                 <span @click="changeClassInCategoryList(item)">
                   <router-link to>{{ item.name }}</router-link>
                 </span>
@@ -59,7 +68,9 @@
         <div class="container-fluid">
           <div class="row">
             <div class="col-12">
-              <div class="product-topbar d-xl-flex align-items-end justify-content-between">
+              <div
+                class="product-topbar d-xl-flex align-items-end justify-content-between"
+              >
                 <!-- Total Products -->
                 <div class="total-products">
                   <p class="h1">
@@ -81,7 +92,11 @@
 
           <div class="row">
             <!-- Single Product Area -->
-            <div class="col-12 col-sm-6 col-md-12 col-xl-6" v-for="item in parts" :key="item._id">
+            <div
+              class="col-12 col-sm-6 col-md-12 col-xl-6"
+              v-for="item in parts"
+              :key="item._id"
+            >
               <div class="single-product-wrapper">
                 <!-- Product Image -->
                 <div class="product-img">
@@ -91,34 +106,60 @@
                 </div>
 
                 <!-- Product Description -->
-                <div class="product-description d-flex align-items-center justify-content-between">
+                <div
+                  class="product-description d-flex align-items-center justify-content-between"
+                >
                   <!-- Product Meta Data -->
                   <div class="product-meta-data">
                     <div class="line"></div>
                     <p class="product-price">${{ item.price }}</p>
-                    <router-link :to="{ name: 'ProductDetail', params: { productId: item._id } }">
+                    <router-link
+                      :to="{
+                        name: 'ProductDetail',
+                        params: { productId: item._id }
+                      }"
+                    >
                       <h6>{{ item.name }}</h6>
                     </router-link>
                   </div>
                   <!-- Ratings & Cart -->
                   <div class="ratings-cart text-right">
                     <div class="ratings">
-                      <b-form-rating variant="warning" size="sm" inline show clear></b-form-rating>
+                      <b-form-rating
+                        variant="warning"
+                        size="sm"
+                        inline
+                        show
+                        clear
+                      ></b-form-rating>
                     </div>
-                    <div class="cart">
+                    <div>
                       <router-link
                         to
                         v-b-tooltip.hover.left
                         t
-                        :title="item.stock === 0 ? 'Stock empty, contact with admin' : 'Add to cart'"
+                        :title="
+                          item.stock <= 0
+                            ? 'Stock empty, contact with admin'
+                            : 'Add to cart'
+                        "
                       >
-                        <img
-                          src="img/core-img/cart.png"
-                          @click="addToCart({product: item, quantity:1})"
-                          :disabled="item.stock === 0"
-                          :variant="item.stock === 0 ? 'outline-danger': ''"
-                          alt="Image"
-                        />
+                        <div v-if="item.stock <= 0">
+                          <b-iconstack font-scale="2">
+                            <b-icon stacked icon="cart4" animation="fade"></b-icon>
+                            <b-icon
+                              stacked
+                              icon="slash-circle"
+                              variant="danger"
+                            ></b-icon>
+                          </b-iconstack>
+                        </div>
+                        <div v-else>
+                          <b-icon-cart4
+                            font-scale="2"
+                            @click="addToCart({ product: item, quantity: 1 })"
+                          ></b-icon-cart4>
+                        </div>
                       </router-link>
                     </div>
                     <router-link to v-if="isAdmin && selectedCategory">
@@ -131,11 +172,18 @@
                       ></b-icon-pencil>
                       <b-icon-trash
                         @click="removeProduct(item._id)"
-                        v-b-tooltip.hover.right
+                        v-b-tooltip.hover.top
                         class="h5"
                         title="Remove product"
                         variant="danger"
                       ></b-icon-trash>
+                      <b-icon-arrow-up-circle-fill
+                        @click="makeAuction(item._id, item.stock)"
+                        v-b-tooltip.hover.right
+                        class="h5"
+                        :title="item.stock <= 0 ? 'Stock empty, you can\'t create auction': 'Create auction'"
+                        variant="warning"
+                      ></b-icon-arrow-up-circle-fill>
                     </router-link>
                   </div>
                 </div>
@@ -150,11 +198,11 @@
                 <ul class="pagination justify-content-end mt-50">
                   <li
                     class="page-item"
-                    v-for="(item) in numberOfPages"
+                    v-for="item in numberOfPages"
                     :key="item"
                     :id="`n${item}`"
                     @click="changeNumberPage(item)"
-                    :class="{'active': (item === 1)}"
+                    :class="{ active: item === 1 }"
                   >
                     <a class="page-link">{{ item }}.</a>
                   </li>
@@ -173,6 +221,7 @@ import Menu from "@/components/Menu.vue";
 import ModalCreateCategoryModel from "@/components/shop/ModalCreateCategoryModel.vue";
 import ModalBase from "@/components/shop/ModalBase.vue";
 import SearchBar from "@/components/SearchBar.vue";
+import ModalCreateAuction from "@/components/auction/modal.data.auction.vue";
 import { mapActions } from "vuex";
 export default {
   name: "Principal",
@@ -180,7 +229,8 @@ export default {
     Menu,
     ModalBase,
     ModalCreateCategoryModel,
-    SearchBar
+    SearchBar,
+    ModalCreateAuction
   },
   props: {
     isAdmin: Boolean
@@ -193,7 +243,8 @@ export default {
       page: 1,
       perPage: 2,
       numberOfPages: 0,
-      query: '',
+      query: "",
+      productIdAuction: "",
       paramsModal: {
         title: "",
         textButton: "",
@@ -235,7 +286,7 @@ export default {
 
         //fill new active class
         document.querySelector(`#id${category._id}`).classList.add("active");
-        
+
         this.page = 1;
         // this.changeNumberPage(1);
       }
@@ -252,7 +303,7 @@ export default {
         },
         filter: {
           category: this.selectedCategory._id,
-          name: { '$regex': `.*${this.query}.*`, '$options': 'i' }
+          name: { $regex: `.*${this.query}.*`, $options: "i" }
         }
       };
 
@@ -351,7 +402,7 @@ export default {
         description: "",
         price: 0,
         stock: 0,
-        pictureUrl: "5f7cb832621f2023784b51a0",
+        pictureUrl: undefined,
         category: this.selectedCategory._id
       };
 
@@ -395,19 +446,20 @@ export default {
       //part => Producto que se cambio o se agrego
 
       if (this.paramsModal.isCreate) {
-        if (this.parts.length < this.perPage) { //si el producto cabe en la pagina actual
+        if (this.parts.length < this.perPage) {
+          //si el producto cabe en la pagina actual
           this.parts.push(part);
-        }
-        else {                                  //recalcular el numero de paginas
-             this.axios
-          .post(
-            "/product/count",
-            { filter: { category: part.category } },
-            { headers: this.$store.state.headers }
-          )
-          .then(
-            res => (this.numberOfPages = Math.ceil(res.data / this.perPage))
-          );
+        } else {
+          //recalcular el numero de paginas
+          this.axios
+            .post(
+              "/product/count",
+              { filter: { category: part.category } },
+              { headers: this.$store.state.headers }
+            )
+            .then(
+              res => (this.numberOfPages = Math.ceil(res.data / this.perPage))
+            );
         }
       } else {
         let indx = this.parts.findIndex(e => e._id === part._id);
@@ -419,8 +471,41 @@ export default {
 
     querySearch: function(query) {
       this.query = query;
-    
+
       this.changeNumberPage(1);
+    },
+
+    dataAuction(data) {
+      let { price, duration } = data;
+      this.axios
+        .post(
+          "/auction",
+          {
+            data: { initPrice: parseInt(price), actualPrice: parseInt(price), duration, product: this.productIdAuction }
+          },
+          { headers: this.$store.state.headers }
+        )
+        .then(() => {
+          this.$store.dispatch("setLengthAuction");
+          this.axios.put(
+            "/product",
+            {
+              filter: { _id: this.productIdAuction },
+              updt: { $inc: { stock: -1 } }
+            },
+            { headers: this.$store.state.headers }
+          );
+        })
+        .catch(e => {
+          if (e.response.status === 401) this.$router.push("/authenticate");
+        });
+    },
+
+    makeAuction(productId, productStock) {
+      if(productStock <= 0) return;
+
+      this.productIdAuction = productId;
+      this.$bvModal.show("modalDataAuction");
     },
 
     ...mapActions(["addToCart"])

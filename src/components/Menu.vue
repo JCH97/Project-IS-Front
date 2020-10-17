@@ -39,7 +39,13 @@
             <router-link to="/shop">Shop</router-link>
           </li>
           <div v-if="user">
-            <li v-if="lengthCart > 0" id="li-cart" @click="changeClassMenu('li-cart')">
+            <li v-if="lengthAuction > 0" id="li-auction" @click="changeClassMenu('li-auction')">
+              <router-link to="/auction">
+                Auctions
+                <span class="w3-badge w3-orange">{{ this.lengthAuction }}</span>
+              </router-link>
+            </li>
+             <li v-if="lengthCart > 0" id="li-cart" @click="changeClassMenu('li-cart')">
               <router-link to="/cart">
                 Cart
                 <span class="w3-badge w3-orange">{{ this.lengthCart }}</span>
@@ -105,6 +111,7 @@ export default {
       .catch(e => { if(e.response.status === 401) this.$router.push("/authenticate"); });
 
     this.$store.dispatch("setLengthCart");
+    this.$store.dispatch("setLengthAuction");
   },
   methods: {
     changeClass: function() {
@@ -119,7 +126,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(["lengthCart"])
+    ...mapState(["lengthCart", "lengthAuction"])
   }
 };
 </script>
