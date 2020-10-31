@@ -5,15 +5,15 @@
       <Menu />
       <div class="single-product-area section-padding-100 clearfix">
         <div class="container-fluid">
-          <b-alert
+          <b-alert v-if="this.auctionDetails.product && this.auctionDetails.user"
             :show="timeToShowAuctionFinishedInSec"
             dismissible
             variant="success"
             @dismissed="timeToShowAuctionFinishedInSec = 0"
           >
-            Well!!!! Auction for {{ this.productDetails.product.name }} has finished.
-            Winner: {{ this.productDetails.user.email }}
-            Finish price: {{ this.productDetails.actualPrice }}
+            Well!!!! Auction for {{ this.auctionDetails.product.name }} has finished.
+            Winner: {{ this.auctionDetails.user.email }}
+            Finish price: {{ this.auctionDetails.actualPrice }}
           </b-alert>
           <div class="row">
             <div class="col-12 col-lg-6 col-md-6">
