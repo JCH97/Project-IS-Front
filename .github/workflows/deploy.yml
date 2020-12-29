@@ -31,6 +31,6 @@ jobs:
             - name: push to back
               uses: johno/actions-push-subdirectories@master
               env:
-                API_TOKEN_GITHUB: ${{ secret.API_TOKEN_GITHUB }}
-                GITHUB_TOKEN: ${{ secret.TOKEN_GITHUB }}
+                API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+                GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
               with: dist JCH97 IS-Back master
