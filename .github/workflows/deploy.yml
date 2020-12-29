@@ -1,0 +1,36 @@
+name: Deploy front
+
+on:
+    push:
+        branches:
+            - master
+    pull_request:
+        branches:
+            - master
+
+jobs:
+    dist_generate:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@master
+
+            - uses: actions/setup-node@master
+
+            - name: install dependecies
+              run: |
+                 npm install
+                 npm run build
+
+    push_to_another:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@master
+
+            - name: push to back
+              uses: johno/actions-push-subdirectories@master
+              env:
+                API_TOKEN_GITHUB: ${{ secret.API_TOKEN_GITHUB }}
+                GITHUB_TOKEN: ${{ secret.TOKEN_GITHUB }}
+              with: dist JCH97 IS-Back master
