@@ -33,4 +33,5 @@ jobs:
               env:
                 API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
                 GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
-              with: dist JCH97 IS-Back master
+              with:
+                args: dist JCH97 IS-Back master
