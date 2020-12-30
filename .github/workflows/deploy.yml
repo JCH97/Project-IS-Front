@@ -18,10 +18,10 @@ jobs:
             - uses: actions/setup-node@master
 
             - name: install dependecies
-              run: |
-                 npm install -g @vue/cli
-                 npm install
-                 npm run build
+              run: npm install
+
+            - name: build
+              run: npm run build
 
     push_to_another:
         needs: dist_generate
