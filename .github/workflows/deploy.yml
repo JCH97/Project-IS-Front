@@ -23,6 +23,7 @@ jobs:
                  npm run build
 
     push_to_another:
+        needs: dist_generate
         runs-on: ubuntu-latest
 
         steps:
